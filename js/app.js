@@ -13,21 +13,43 @@ class FetchDemo extends React.Component {
     };
   }
 
-  activatePost(posturl, id){
-    console.log(id)
-    this.setState({'activePostId':id})
+  activatePost(posturl, id, postid){
 
-console.log('https://www.reddit.com'+posturl+'.json')
+    this.setState({'activePostId':id})
+  
   fetch('https://www.reddit.com'+posturl+'.json')
       .then((resp) => resp.json()).then(res => {
         // console.log(res)
         const activePost = res[0].data.children.map(obj => obj.data);
         this.setState({ activePost });
-        console.log(this.state.activePost)
+        
+        if(document.getElementById(postid)!==null){
+                var topPos = document.getElementById(postid).offsetTop;
+                document.getElementById('nav').scrollTop = topPos-40;
+              }
       });
-
-
   }
+
+  fetchMore(){
+    let length = this.state.posts.length-1
+    let last = this.state.posts[length].name;
+
+
+    console.log('https://www.reddit.com/r/funny.json?limit=50&count=50&after='+last+'');
+
+    fetch('https://www.reddit.com/r/funny.json?limit=50&count=50&after='+last)
+      .then((resp) => resp.json()).then(res => {
+        console.log(res)
+        let posts = res.data.children.map(obj => obj.data);
+        let original = this.state.posts;
+        posts = original.concat(posts);
+        
+        this.setState({ posts });
+        console.log(this.state.posts)
+        
+      });
+  }
+
 
   handleKeys(e){
      if (e.keyCode == '37') {
@@ -41,24 +63,49 @@ console.log('https://www.reddit.com'+posturl+'.json')
     else if (e.keyCode == '39') {
        // right arrow
        console.log('next')
+       console.log(this.state.activePostId+' of '+this.state.posts.length)
        let next= this.state.activePostId+1;
+
+       if((this.state.activePostId+1)==this.state.posts.length){
+        console.log('fetching more...')
+        this.fetchMore()
+      }else{
        let url = this.state.posts[next].permalink;
-       console.log(this.state.posts[this.state.activePostId+1].title)
-       this.activatePost(url,next);
+       let postid = this.state.posts[next].id;
+       this.activatePost(url,next,postid);
+     }
     } 
     
   }
 
+  scrolled(){
+    console.log('scrolling')
+    let o = document.getElementById('nav');
+    if(o!==null){
+             
+      if(o.offsetHeight + o.scrollTop > o.scrollHeight)
+      {
+        console.log('fetching more...')
+        this.fetchMore()
+      }
+    }
+  }
+
   componentDidMount() {
-   fetch('https://www.reddit.com/r/funny.json')
+   fetch('https://www.reddit.com/r/funny.json?limit=50')
       .then((resp) => resp.json()).then(res => {
         console.log(res)
-        const posts = res.data.children.map(obj => obj.data);
+        let posts = res.data.children.map(obj => obj.data);
         this.setState({ posts });
         console.log(this.state.posts)
+        //get first post
+        this.activatePost(this.state.posts[0].permalink,0);
       });
       document.addEventListener("keydown", this.handleKeys.bind(this), false);
+      
   }
+
+
 
   render() {
     return (
@@ -76,12 +123,12 @@ console.log('https://www.reddit.com'+posturl+'.json')
       </ul>
       </div>
     
-      <div className="navBar">
+      <div className="navBar" id="nav" onScroll={()=>this.scrolled()}>
         <h1>{`/r/funny`}</h1>
         <ul>
           {this.state.posts.map((post,id) =>
 
-            <li key={post.id}><button onClick={()=>this.activatePost(post.permalink,id)}>{post.title}
+            <li key={post.id} id={post.id}><button onClick={()=>this.activatePost(post.permalink,id, post.id)}>{post.title}
             <img src={post.thumbnail} width={post.thumbnail_width} height={post.thumbnail_height}/></button></li>
           )}
         </ul>

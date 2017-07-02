@@ -9807,13 +9807,11 @@ var FetchDemo = function (_React$Component) {
 
   _createClass(FetchDemo, [{
     key: 'activatePost',
-    value: function activatePost(posturl, id) {
+    value: function activatePost(posturl, id, postid) {
       var _this2 = this;
 
-      console.log(id);
       this.setState({ 'activePostId': id });
 
-      console.log('https://www.reddit.com' + posturl + '.json');
       fetch('https://www.reddit.com' + posturl + '.json').then(function (resp) {
         return resp.json();
       }).then(function (res) {
@@ -9822,7 +9820,35 @@ var FetchDemo = function (_React$Component) {
           return obj.data;
         });
         _this2.setState({ activePost: activePost });
-        console.log(_this2.state.activePost);
+
+        if (document.getElementById(postid) !== null) {
+          var topPos = document.getElementById(postid).offsetTop;
+          document.getElementById('nav').scrollTop = topPos - 40;
+        }
+      });
+    }
+  }, {
+    key: 'fetchMore',
+    value: function fetchMore() {
+      var _this3 = this;
+
+      var length = this.state.posts.length - 1;
+      var last = this.state.posts[length].name;
+
+      console.log('https://www.reddit.com/r/funny.json?limit=50&count=50&after=' + last + '');
+
+      fetch('https://www.reddit.com/r/funny.json?limit=50&count=50&after=' + last).then(function (resp) {
+        return resp.json();
+      }).then(function (res) {
+        console.log(res);
+        var posts = res.data.children.map(function (obj) {
+          return obj.data;
+        });
+        var original = _this3.state.posts;
+        posts = original.concat(posts);
+
+        _this3.setState({ posts: posts });
+        console.log(_this3.state.posts);
       });
     }
   }, {
@@ -9838,33 +9864,55 @@ var FetchDemo = function (_React$Component) {
       } else if (e.keyCode == '39') {
         // right arrow
         console.log('next');
+        console.log(this.state.activePostId + ' of ' + this.state.posts.length);
         var next = this.state.activePostId + 1;
-        var _url = this.state.posts[next].permalink;
-        console.log(this.state.posts[this.state.activePostId + 1].title);
-        this.activatePost(_url, next);
+
+        if (this.state.activePostId + 1 == this.state.posts.length) {
+          console.log('fetching more...');
+          this.fetchMore();
+        } else {
+          var _url = this.state.posts[next].permalink;
+          var postid = this.state.posts[next].id;
+          this.activatePost(_url, next, postid);
+        }
+      }
+    }
+  }, {
+    key: 'scrolled',
+    value: function scrolled() {
+      console.log('scrolling');
+      var o = document.getElementById('nav');
+      if (o !== null) {
+
+        if (o.offsetHeight + o.scrollTop > o.scrollHeight) {
+          console.log('fetching more...');
+          this.fetchMore();
+        }
       }
     }
   }, {
     key: 'componentDidMount',
     value: function componentDidMount() {
-      var _this3 = this;
+      var _this4 = this;
 
-      fetch('https://www.reddit.com/r/funny.json').then(function (resp) {
+      fetch('https://www.reddit.com/r/funny.json?limit=50').then(function (resp) {
         return resp.json();
       }).then(function (res) {
         console.log(res);
         var posts = res.data.children.map(function (obj) {
           return obj.data;
         });
-        _this3.setState({ posts: posts });
-        console.log(_this3.state.posts);
+        _this4.setState({ posts: posts });
+        console.log(_this4.state.posts);
+        //get first post
+        _this4.activatePost(_this4.state.posts[0].permalink, 0);
       });
       document.addEventListener("keydown", this.handleKeys.bind(this), false);
     }
   }, {
     key: 'render',
     value: function render() {
-      var _this4 = this;
+      var _this5 = this;
 
       return _react2.default.createElement(
         'div',
@@ -9882,7 +9930,9 @@ var FetchDemo = function (_React$Component) {
         ),
         _react2.default.createElement(
           'div',
-          { className: 'navBar' },
+          { className: 'navBar', id: 'nav', onScroll: function onScroll() {
+              return _this5.scrolled();
+            } },
           _react2.default.createElement(
             'h1',
             null,
@@ -9894,11 +9944,11 @@ var FetchDemo = function (_React$Component) {
             this.state.posts.map(function (post, id) {
               return _react2.default.createElement(
                 'li',
-                { key: post.id },
+                { key: post.id, id: post.id },
                 _react2.default.createElement(
                   'button',
                   { onClick: function onClick() {
-                      return _this4.activatePost(post.permalink, id);
+                      return _this5.activatePost(post.permalink, id, post.id);
                     } },
                   post.title,
                   _react2.default.createElement('img', { src: post.thumbnail, width: post.thumbnail_width, height: post.thumbnail_height })
