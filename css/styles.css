@@ -31,7 +31,25 @@ header{background-color:#03A9F4;padding:14px;box-shadow:01px3pxrgba(0,0,0,0.12),
 }
 .navBar ul li{
     display:block;
+    
+    
 }
+.navBar ul li button{
+    font-size:14px;
+    padding:10px 20px;
+    height:400px;
+    color:white;
+    width:100%;
+    overflow:hidden;
+    background:none;
+}
+.navBar ul li button img{
+    display:block;
+    width:100%;
+    margin-top:10px;
+    min-height:350px;
+}
+
 
 .activePost{
     float:left;

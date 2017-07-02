@@ -129,7 +129,7 @@ class FetchDemo extends React.Component {
           {this.state.posts.map((post,id) =>
 
             <li key={post.id} id={post.id}><button onClick={()=>this.activatePost(post.permalink,id, post.id)}>{post.title}
-            <img src={post.thumbnail} width={post.thumbnail_width} height={post.thumbnail_height}/></button></li>
+            <img src={post.thumbnail}/></button></li>
           )}
         </ul>
       </div>
