@@ -9799,7 +9799,8 @@ var FetchDemo = function (_React$Component) {
     _this.state = {
       posts: [],
       activePost: [0],
-      activePostId: 0
+      activePostId: 0,
+      activePostComments: [0]
 
     };
     return _this;
@@ -9811,15 +9812,24 @@ var FetchDemo = function (_React$Component) {
       var _this2 = this;
 
       this.setState({ 'activePostId': id });
-
       fetch('https://www.reddit.com' + posturl + '.json').then(function (resp) {
         return resp.json();
       }).then(function (res) {
-        // console.log(res)
+        console.log('activatepost');
+        console.log(res);
         var activePost = res[0].data.children.map(function (obj) {
           return obj.data;
         });
         _this2.setState({ activePost: activePost });
+        var activePostComments = res[1].data.children.map(function (obj) {
+          return obj.data;
+        });
+        _this2.setState({ activePostComments: activePostComments });
+
+        console.log('activePost:');
+        console.log(_this2.state.activePost);
+        console.log('activePostComments:');
+        console.log(_this2.state.activePostComments);
 
         if (document.getElementById(postid) !== null) {
           var topPos = document.getElementById(postid).offsetTop;
@@ -9907,12 +9917,60 @@ var FetchDemo = function (_React$Component) {
         //get first post
         _this4.activatePost(_this4.state.posts[0].permalink, 0);
       });
-      document.addEventListener("keydown", this.handleKeys.bind(this), false);
+      document.addEventListener('keydown', this.handleKeys.bind(this), false);
+    }
+  }, {
+    key: 'createChildren',
+    value: function createChildren() {
+      var _this5 = this;
+
+      var parent = this.state.activePostComments.map(function (comment) {
+
+        // <li key={Math.random()}>{comment.body}</li>    
+        var child = function child(comment) {
+          var grandchild = {};
+          if (comment.replies) {
+            var _grandchild = _this5.createGrandChildTree(comment.replies);
+            _grandchild;
+
+            console.log('comment.replies is');
+            console.log(comment.replies);
+          }
+          return grandchild;
+        };
+        // let body = child(comment);
+
+        return _react2.default.createElement(
+          'li',
+          { key: Math.random() },
+          comment.body,
+          child(comment)
+        );
+      });
+      console.log('parent is');
+      console.log(parent);
+      return parent;
+    }
+  }, {
+    key: 'createGrandChildTree',
+    value: function createGrandChildTree(replies) {
+      var grandchild = replies.data.children.map(function (childcomment) {
+        _react2.default.createElement(
+          'li',
+          { key: Math.random() },
+          childcomment.data.body
+        );
+        console.log(childcomment);
+      });
+      console.log('grandchild');
+
+      console.log(grandchild);
+      return grandchild;
     }
   }, {
     key: 'render',
     value: function render() {
-      var _this5 = this;
+      var _this6 = this;
 
       return _react2.default.createElement(
         'div',
@@ -9926,12 +9984,16 @@ var FetchDemo = function (_React$Component) {
             this.state.activePost[0].title
           ),
           _react2.default.createElement('img', { src: this.state.activePost[0].thumbnail }),
-          _react2.default.createElement('ul', null)
+          _react2.default.createElement(
+            'ul',
+            null,
+            this.createChildren()
+          )
         ),
         _react2.default.createElement(
           'div',
           { className: 'navBar', id: 'nav', onScroll: function onScroll() {
-              return _this5.scrolled();
+              return _this6.scrolled();
             } },
           _react2.default.createElement(
             'h1',
@@ -9948,10 +10010,10 @@ var FetchDemo = function (_React$Component) {
                 _react2.default.createElement(
                   'button',
                   { onClick: function onClick() {
-                      return _this5.activatePost(post.permalink, id, post.id);
+                      return _this6.activatePost(post.permalink, id, post.id);
                     } },
                   post.title,
-                  _react2.default.createElement('img', { src: post.thumbnail, width: post.thumbnail_width, height: post.thumbnail_height })
+                  _react2.default.createElement('img', { src: post.thumbnail })
                 )
               );
             })
