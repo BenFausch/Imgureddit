@@ -63,3 +63,37 @@ header{background-color:#03A9F4;padding:14px;box-shadow:01px3pxrgba(0,0,0,0.12),
 .activePost ul li{
     color:white;
 }
+
+.comments li{
+    border:2px solid red;
+    margin:15px;
+}
+
+.subChild-1{
+    border:2px solid blue!important;
+    padding-left:5px;
+}
+.subChild-2{
+    border:2px solid purple!important;
+    padding-left:5px;
+}
+.subChild-3{
+    border:2px solid pink!important;
+    padding-left:5px;
+}
+.subChild-4{
+    border:2px solid orange!important;
+    padding-left:5px;
+}
+.subChild-5{
+    border:2px solid white!important;
+    padding-left:5px;
+}
+.subChild-6{
+    border:2px solid yellow!important;
+    padding-left:5px;
+}
+.subChild-7{
+    border:2px solid green!important;
+    padding-left:5px;
+}
