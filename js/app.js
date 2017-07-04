@@ -169,10 +169,7 @@ return comp;
           <h1>{this.state.activePost[0].title}</h1>
           <img src={this.state.activePost[0].thumbnail}/>
           <ul className="comments">
-            
             {this.createChildren()}
-        
-      
           </ul>
         </div>
     
