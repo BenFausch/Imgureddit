@@ -122,7 +122,7 @@ class FetchDemo extends React.Component {
           
           console.log('comment.replies is')
           console.log(comment.replies)
-
+          component.push( <input type="checkbox" id={'subChild-1'}/>)
           component.push(grandchild)
         }                                    
     });
@@ -132,37 +132,29 @@ class FetchDemo extends React.Component {
   }
 
 createGrandChildTree(replies, i ){
-   let container = [];
-   
-
-   let grandchild = replies.data.children;
-   console.log('grandchild '+i+' is:')
-   console.log(grandchild)
+  let container = [];
+  let grandchild = replies.data.children;
 
    grandchild.map((childcomment)=>{
      if(childcomment.data.body){
            container.push(<li className={"subChild-"+i} id={childcomment.data.id} key={Math.random()}>{childcomment.data.body}</li>)
            
            if(childcomment.data.replies){
-             console.log('childcomment '+i+' has replies')
-             console.log(childcomment.data.replies)
              let smaller = this.getGrandChild(childcomment.data.replies, i++);
+            container.push(<input type="checkbox" id={'subChild-'+i}/>)
              container.push(
-              <ul id={'smaller-'+i}>
-              {smaller}
-              </ul>
+                <ul className={'subChild-'+i}>
+                  {smaller}
+                </ul>
               );
            }
      }
   });
     
-
-    // console.log('grandchild')
-    // console.log(grandchild)
-    return (<ul id={'child-'+i}>{container}</ul>);
+    return (<ul className={'child-'+i}>{container}</ul>);
 }
 
-getGrandChild = (body, id) =>{
+getGrandChild = (body, id) => {
 let comp = this.createGrandChildTree(body, id);
 return comp;
 }   

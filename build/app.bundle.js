@@ -9944,7 +9944,7 @@ var FetchDemo = function (_React$Component) {
 
           console.log('comment.replies is');
           console.log(comment.replies);
-
+          component.push(_react2.default.createElement('input', { type: 'checkbox', id: 'subChild-1' }));
           component.push(grandchild);
         }
       });
@@ -9957,10 +9957,7 @@ var FetchDemo = function (_React$Component) {
       var _this6 = this;
 
       var container = [];
-
       var grandchild = replies.data.children;
-      console.log('grandchild ' + i + ' is:');
-      console.log(grandchild);
 
       grandchild.map(function (childcomment) {
         if (childcomment.data.body) {
@@ -9971,23 +9968,21 @@ var FetchDemo = function (_React$Component) {
           ));
 
           if (childcomment.data.replies) {
-            console.log('childcomment ' + i + ' has replies');
-            console.log(childcomment.data.replies);
             var smaller = _this6.getGrandChild(childcomment.data.replies, i++);
+            // container.push(<label for={'subChild-'+i}>-</label>)
+            container.push(_react2.default.createElement('input', { type: 'checkbox', id: 'subChild-' + i }));
             container.push(_react2.default.createElement(
               'ul',
-              { id: 'smaller-' + i },
+              { className: 'subChild-' + i },
               smaller
             ));
           }
         }
       });
 
-      // console.log('grandchild')
-      // console.log(grandchild)
       return _react2.default.createElement(
         'ul',
-        { id: 'child-' + i },
+        { className: 'child-' + i },
         container
       );
     }
