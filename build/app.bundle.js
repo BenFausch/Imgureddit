@@ -9802,7 +9802,7 @@ var FetchDemo = function (_React$Component) {
     };
 
     _this.state = {
-      subreddit: 'funny',
+      subreddit: 'all',
       posts: [],
       activePost: [0],
       activePostId: 0,
@@ -9831,10 +9831,9 @@ var FetchDemo = function (_React$Component) {
         _this2.setState({ activePostComments: activePostComments });
 
         if (document.getElementById(postid) !== null) {
-          var topPos = document.getElementById(postid).offsetTop;
-          document.getElementById('nav').scrollTop = topPos - 40;
+          var topPos = document.getElementById(postid).offsetTop - 240;
+          document.getElementById('nav').scrollTop = topPos;
         }
-        // this.unCheckBoxes();
       });
     }
   }, {
@@ -9843,14 +9842,19 @@ var FetchDemo = function (_React$Component) {
       var _this3 = this;
 
       var length = this.state.posts.length - 1;
-      var last = this.state.posts[length].name;
 
-      console.log('https://www.reddit.com/r/' + this.state.subreddit + '.json?limit=50&count=50&after=' + last + '');
+      var url = 'https://www.reddit.com/r/' + this.state.subreddit + '.json?limit=50&count=50';
+      if (this.state.posts[length] !== undefined) {
+        var last = this.state.posts[length].name;
+        url = 'https://www.reddit.com/r/' + this.state.subreddit + '.json?limit=50&count=50&after=' + last + '';
+      }
 
-      fetch('https://www.reddit.com/r/' + this.state.subreddit + '.json?limit=50&count=50&after=' + last).then(function (resp) {
+      console.log(url);
+
+      fetch(url).then(function (resp) {
         return resp.json();
       }).then(function (res) {
-        // console.log(res);
+        console.log(res);
         var posts = res.data.children.map(function (obj) {
           return obj.data;
         });
@@ -9858,7 +9862,6 @@ var FetchDemo = function (_React$Component) {
         posts = original.concat(posts);
 
         _this3.setState({ posts: posts });
-        // console.log(this.state.posts);
       });
     }
 
@@ -9906,7 +9909,7 @@ var FetchDemo = function (_React$Component) {
       var o = document.getElementById('nav');
       if (o !== null) {
 
-        if (o.offsetHeight + o.scrollTop > o.scrollHeight) {
+        if (o.offsetHeight + o.scrollTop + 50 > o.scrollHeight) {
           console.log('fetching more...');
           this.fetchMore();
         }
@@ -9931,6 +9934,7 @@ var FetchDemo = function (_React$Component) {
           return obj.data;
         });
         _this4.setState({ posts: posts });
+        console.log(_this4.state.posts);
         //get first post
         _this4.activatePost(_this4.state.posts[0].permalink, 0);
       });
@@ -9941,7 +9945,7 @@ var FetchDemo = function (_React$Component) {
       var _this5 = this;
 
       var component = [];
-      var parent = this.state.activePostComments.map(function (comment) {
+      this.state.activePostComments.map(function (comment) {
         component.push(_react2.default.createElement(
           'li',
           { id: comment.id, key: Math.random() },
@@ -9971,7 +9975,7 @@ var FetchDemo = function (_React$Component) {
         if (childcomment.data.body !== undefined) {
           container.push(_react2.default.createElement(
             'li',
-            { className: "subChild-" + i, id: childcomment.data.id, key: Math.random() },
+            { className: 'subChild-' + i, id: childcomment.data.id, key: Math.random() },
             childcomment.data.body
           ));
 
@@ -9988,6 +9992,8 @@ var FetchDemo = function (_React$Component) {
           }
         }
       });
+
+      //create random colors for comments
       var cRandomColor = Math.floor(Math.random() * 16777215).toString(16);
       var cBorder = { 'borderLeftColor': '#' + cRandomColor };
 
@@ -10008,13 +10014,19 @@ var FetchDemo = function (_React$Component) {
     }
   }, {
     key: 'checkImage',
-    value: function checkImage(url) {
+    value: function checkImage(url, backup) {
       if (url !== undefined) {
         if (url.match(/\.(jpeg|jpg|gif|png)$/) != null) {
           return url;
+        } else if (backup !== undefined) {
+          if (url.match(/\.(jpeg|jpg|gif|png)$/) != null) {
+            return backup;
+          } else {
+            return 'https://unsplash.it/200/300/?random';
+          }
         } else {
-          return 'https://unsplash.it/200';
-        };
+          return 'https://unsplash.it/200/300/?random';
+        }
       }
     }
   }, {
@@ -10033,7 +10045,7 @@ var FetchDemo = function (_React$Component) {
             null,
             this.state.activePost[0].title
           ),
-          _react2.default.createElement('img', { src: this.checkImage(this.state.activePost[0].thumbnail) }),
+          _react2.default.createElement('img', { src: this.checkImage(this.state.activePost[0].url, this.state.activePost[0].thumbnail) }),
           _react2.default.createElement(
             'ul',
             { key: Math.random(), className: 'comments' },
@@ -10041,17 +10053,26 @@ var FetchDemo = function (_React$Component) {
           )
         ),
         _react2.default.createElement(
-          'h1',
-          null,
-          this.state.subreddit
-        ),
-        _react2.default.createElement('input', { key: this.state.subreddit, id: 'subreddit', type: 'text' }),
-        _react2.default.createElement(
-          'button',
-          { onClick: function onClick() {
-              return _this7.setSubReddit();
-            } },
-          'Go'
+          'div',
+          { className: 'titling' },
+          _react2.default.createElement(
+            'h1',
+            null,
+            'r/',
+            this.state.subreddit
+          ),
+          _react2.default.createElement(
+            'div',
+            { className: 'submit' },
+            _react2.default.createElement('input', { key: this.state.subreddit, id: 'subreddit', type: 'text', maxLength: '100', placeholder: 'enter a sub' }),
+            _react2.default.createElement(
+              'button',
+              { onClick: function onClick() {
+                  return _this7.setSubReddit();
+                } },
+              'Go'
+            )
+          )
         ),
         _react2.default.createElement(
           'div',

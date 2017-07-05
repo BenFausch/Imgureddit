@@ -6,11 +6,11 @@ class FetchDemo extends React.Component {
     super(props);
 
     this.state = {
-      subreddit:'funny',
+      subreddit:'all',
       posts: [],
       activePost:[0],
       activePostId:0,
-      activePostComments:[0]
+      activePostComments:[0],
 
     };
   }
@@ -26,45 +26,50 @@ class FetchDemo extends React.Component {
 
 
         if(document.getElementById(postid)!==null){
-          var topPos = document.getElementById(postid).offsetTop;
-          document.getElementById('nav').scrollTop = topPos-40;
+          var topPos = document.getElementById(postid).offsetTop-240;
+          document.getElementById('nav').scrollTop = topPos;
         }
-        // this.unCheckBoxes();
       });
   }
 
   fetchMore(){
     let length = this.state.posts.length-1;
-    let last = this.state.posts[length].name;
+    
 
-    console.log('https://www.reddit.com/r/'+this.state.subreddit+'.json?limit=50&count=50&after='+last+'');
+    let url = 'https://www.reddit.com/r/'+this.state.subreddit+'.json?limit=50&count=50';
+    if(this.state.posts[length]!==undefined){
+      let last = this.state.posts[length].name;
+      url = 'https://www.reddit.com/r/'+this.state.subreddit+'.json?limit=50&count=50&after='+last+'';
+    }
 
-    fetch('https://www.reddit.com/r/'+this.state.subreddit+'.json?limit=50&count=50&after='+last)
+    console.log(url);
+
+    fetch(url)
       .then((resp) => resp.json()).then(res => {
-        // console.log(res);
+        console.log(res);
         let posts = res.data.children.map(obj => obj.data);
         let original = this.state.posts;
         posts = original.concat(posts);
         
         this.setState({ posts });
-        // console.log(this.state.posts);
+        
 
       });
   }
 
-//   unCheckBoxes(){
-//     var array = document.getElementsByClassName("checkbox");
-// for(var ii = 0; ii < array.length; ii++)
-// {
-//    if(array[ii].type == "checkbox")
-//    {
-//       if(array[ii].className == 'checkbox')
-//        {
-//         array[ii].checked = false;
-//        }
-//    }
-// }
-//   }
+  //   unCheckBoxes(){
+  //     var array = document.getElementsByClassName("checkbox");
+  // for(var ii = 0; ii < array.length; ii++)
+  // {
+  //    if(array[ii].type == "checkbox")
+  //    {
+  //       if(array[ii].className == 'checkbox')
+  //        {
+  //         array[ii].checked = false;
+  //        }
+  //    }
+  // }
+  //   }
 
 
   handleKeys(e){
@@ -95,7 +100,7 @@ class FetchDemo extends React.Component {
     let o = document.getElementById('nav');
     if(o!==null){
              
-      if(o.offsetHeight + o.scrollTop > o.scrollHeight)
+      if(o.offsetHeight + o.scrollTop +50> o.scrollHeight)
       {
         console.log('fetching more...');
         this.fetchMore();
@@ -110,11 +115,12 @@ class FetchDemo extends React.Component {
   }
 
   fetchJSON(subreddit){
-    console.log('https://www.reddit.com/r/'+subreddit+'.json?limit=50')
+    console.log('https://www.reddit.com/r/'+subreddit+'.json?limit=50');
     fetch('https://www.reddit.com/r/'+subreddit+'.json?limit=50')
       .then((resp) => resp.json()).then(res => {
         let posts = res.data.children.map(obj => obj.data);
         this.setState({ posts });
+        console.log(this.state.posts);
         //get first post
         this.activatePost(this.state.posts[0].permalink,0);
       });
@@ -122,89 +128,102 @@ class FetchDemo extends React.Component {
 
   createChildren(){
     let component = [];
-    let parent = this.state.activePostComments.map((comment) => {
+    this.state.activePostComments.map((comment) => {
       component.push(<li id={comment.id} key={Math.random()}>{comment.body}</li>);
     
-         if (comment.replies){
+      if (comment.replies){
           
-          let grandchild = this.createGrandChildTree(comment.replies, 1);
+        let grandchild = this.createGrandChildTree(comment.replies, 1);
           
-          component.push( <input key={Math.random()} type="checkbox" id={'subChild-1'} className="checkbox"/>)
-          component.push(grandchild)
-        }                                    
+        component.push( <input key={Math.random()} type="checkbox" id={'subChild-1'} className="checkbox"/>);
+        component.push(grandchild);
+      }                                    
     });
 
     
     return component;
   }
 
-createGrandChildTree(replies, i ){
-  let container = [];
-  let grandchild = replies.data.children;
+  createGrandChildTree(replies, i ){
+    let container = [];
+    let grandchild = replies.data.children;
 
-   grandchild.map((childcomment)=>{
-     if(childcomment.data.body!==undefined){
-           container.push(<li className={"subChild-"+i} id={childcomment.data.id} key={Math.random()} >{childcomment.data.body}</li>)
+    grandchild.map((childcomment)=>{
+      if(childcomment.data.body!==undefined){
+        container.push(<li className={'subChild-'+i} id={childcomment.data.id} key={Math.random()} >{childcomment.data.body}</li>);
            
-           if(childcomment.data.replies){
-             let smaller = this.getGrandChild(childcomment.data.replies, i++);
-            if(smaller!==undefined){
-                        container.push(<input key={Math.random()} type="checkbox" id={'subChild-'+i} className="checkbox"/>)
-                         container.push(
-                            <ul key={Math.random()} id={'subChild-'+i}>
-                              {smaller}
-                            </ul>
-                          );
-                       }
-           }
-     }
-  });
-   let cRandomColor = Math.floor(Math.random()*16777215).toString(16);
+        if(childcomment.data.replies){
+          let smaller = this.getGrandChild(childcomment.data.replies, i++);
+          if(smaller!==undefined){
+            container.push(<input key={Math.random()} type="checkbox" id={'subChild-'+i} className="checkbox"/>);
+            container.push(
+              <ul key={Math.random()} id={'subChild-'+i}>
+                {smaller}
+              </ul>
+            );
+          }
+        }
+      }
+    });
+
+    //create random colors for comments
+    let cRandomColor = Math.floor(Math.random()*16777215).toString(16);
     let cBorder = {'borderLeftColor':'#'+cRandomColor};
     
     return (<ul key={Math.random()} className={'child-'+i} style={cBorder}>{container}</ul>);
-}
+  }
 
 getGrandChild = (body, id) => {
-let comp = this.createGrandChildTree(body, id);
-return comp;
+  let comp = this.createGrandChildTree(body, id);
+  return comp;
 }   
 
 setSubReddit(){
-  let subreddit = document.getElementById('subreddit').value;
-  subreddit = subreddit.replace(/[^\w\s]/gi, '')
-  this.setState({'subreddit':subreddit});
-  this.setState({ 'posts':[] });
-  this.fetchJSON(subreddit);
-}
+    let subreddit = document.getElementById('subreddit').value;
+    subreddit = subreddit.replace(/[^\w\s]/gi, '');
+    this.setState({'subreddit':subreddit});
+    this.setState({ 'posts':[] });
+    this.fetchJSON(subreddit);
+  }
 
-checkImage(url){
-  if(url!==undefined){
-    if(url.match(/\.(jpeg|jpg|gif|png)$/) != null)
+checkImage(url, backup){
+    if(url!==undefined){
+      if(url.match(/\.(jpeg|jpg|gif|png)$/) != null)
       {
-            return url
+        return url;
+      }else if(backup!==undefined){
+        if(url.match(/\.(jpeg|jpg|gif|png)$/) != null){
+          return backup;
+        }else{
+          return 'https://unsplash.it/200/300/?random';
+        }
+
       }else{
-        return 'https://unsplash.it/200';
-      };
+        return 'https://unsplash.it/200/300/?random';
+      }
     }
-}
+  }
 
 
-  render() {
+render() {
     return (
       <div className="content">
         <div className="activePost">
           <h1>{this.state.activePost[0].title}</h1>
-          <img src={this.checkImage(this.state.activePost[0].thumbnail)}/>
+          <img src={this.checkImage(this.state.activePost[0].url, this.state.activePost[0].thumbnail)}/>
           <ul key={Math.random()} className="comments">
             {this.createChildren()}
           </ul>
         </div>
-        <h1>{this.state.subreddit}</h1>
-        <input key={this.state.subreddit} id="subreddit" type="text"></input>
-        <button onClick={()=>this.setSubReddit()}>Go</button>
+        <div className="titling">
+          <h1>r/{this.state.subreddit}</h1>
+          <div className="submit">
+            <input key={this.state.subreddit} id="subreddit" type="text"maxLength="100" placeholder="enter a sub"></input>
+            <button onClick={()=>this.setSubReddit()}>Go</button>
+          </div>
+        </div>
         <div className="navBar" id="nav" onScroll={()=>this.scrolled()}>
-          
+            
           <ul key={Math.random()}>
             {this.state.posts.map((post,id) =>
 

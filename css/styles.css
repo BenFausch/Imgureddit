@@ -13,13 +13,17 @@ header{background-color:#03A9F4;padding:14px;box-shadow:01px3pxrgba(0,0,0,0.12),
 /*======*/
 /*======*/
 .navBar{
-    float:right;
-    border: 1px solid white;
-    width:33%;
+    /* float:right; */
+    /* border: 1px solid white; */
+    width: 25%;
     padding:5%;
     padding:0;
-    height:90vh;
-    overflow:scroll;
+    height: 100vh;
+    position: fixed;
+    overflow: scroll;
+    right: 0px;
+    box-sizing: border-box;
+    padding-top: 17vw;
 }
 .navBar ul {
     width:100%;
@@ -28,46 +32,75 @@ header{background-color:#03A9F4;padding:14px;box-shadow:01px3pxrgba(0,0,0,0.12),
     -webkit-margin-before:0;
     -webkit-margin-after:0;
     -webkit-padding-start:0;
+    background-color: black;
 }
 .navBar ul li{
     display:block;
-    
-    
+    border: none;
+    border-top: 10px solid darkred;
 }
 .navBar ul li button{
-    font-size:14px;
-    padding:10px 20px;
-    height:400px;
+    font-size: 18px;
+    padding: 10px 5px 35px 5px;
+    /* height:400px; */
     color:white;
     width:100%;
     overflow:hidden;
     background:none;
+    border: none;
 }
 .navBar ul li button img{
     display:block;
     width:100%;
     margin-top:10px;
-    min-height:350px;
+    /* min-height:350px; */
 }
 
 
 .activePost{
     float:left;
-    width:65%;
+    width:73%;
+    background: rgba(255,255,255,.09);
 }
-.activePost h1{}
+.activePost h1{
+    font-size: 2.5vw;
+    margin-top: 0px;
+    /* display: inline-block; */
+    width: 70%;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
 .activePost ul{
     list-style:none;
-    
+    width: 95%;
+    margin-left: auto;
+    margin-right: auto;
 }
 .activePost ul li{
     color:white;
+    line-height: 1.25em;
 }
 
+
+.activePost img{
+    max-width: 70%;
+    max-height: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    display: block;
+}
+
+.comments{
+    width:70%!important;
+}
 .comments li{
     border-bottom:1px dashed red;
     margin:15px;
     padding-left:0px;
+    padding-bottom: 7px;
 }
 
 ul.child-1{
@@ -134,7 +167,7 @@ ul #subChild-7{
 }*/
 
 input[type=checkbox]{
-    transform:scale(2, 2);
+    transform:scale(1.5,1.5);
     visibility:hidden;
 
 }
@@ -142,16 +175,16 @@ input[type=checkbox]{
 input[type=checkbox]:not(:checked):after{
     display:block;
     content:'+';
-    color:blue;
+    color: darkgreen;
     font-size:25px;
     font-weight:bold;
     margin-top:-14px;
-visibility:visible;
+    visibility:visible;
 }
 input[type=checkbox]:checked:after{
     display:block;
     content:'-';
-    color:green;
+    color: darkred;
     font-size:25px;
     font-weight:bold;
     margin-top:-14px;
@@ -175,7 +208,70 @@ input[type=checkbox]:checked + ul{
 
 li + input[type=checkbox]{
     margin-left:-20px;
-    margin-top:-30px;
+    margin-top: -35px;
     float:left;
 }
 
+.titling{
+    position:fixed;
+    top:0px;
+    right: 0px;
+    width: 25%;
+    border: 10px solid darkred;
+    border-left: none;
+    height: 16vw;
+    overflow: hidden;
+    box-sizing: border-box;
+    z-index: 9;
+    background: black;
+    padding: 5px 1vw;
+    border-right: none;
+}
+
+.titling h1{
+    font-size: 6.5vw;
+    line-height: 0;
+}
+.titling input{
+    width:100px;
+    background: rgba(255,255,255,0.15);
+    border:none;
+    border-bottom: 1px solid green;
+    border-radius: 2px;
+    width: 75%;
+    margin-right:2%;
+    color: white;
+    padding-left: 5px;
+    font-size: 2vw;
+    line-height:0;
+    display:inline-block;
+    height:100%;
+}
+.titling button{
+    border-color:green;
+    background:darkred;
+    color: white;
+    border: none;
+    border: 2px solid darkred;
+    height:100%;
+    margin-top:-1vw;
+    vertical-align:middle;
+    /*border-radius:5px;*/
+
+    width: 15%;
+    display:inline-block;
+    font-size: 1.5vw;
+    padding: 7px;
+    line-height: 0px;
+    text-transform: lowercase;
+
+    transition:all 500ms;
+}
+.titling button:hover{
+    background:white;
+    color:green;
+    border: 2px solid green;
+}
+.submit{
+    height:3vw;
+}
