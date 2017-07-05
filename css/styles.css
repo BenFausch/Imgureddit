@@ -65,38 +65,73 @@ header{background-color:#03A9F4;padding:14px;box-shadow:01px3pxrgba(0,0,0,0.12),
 }
 
 .comments li{
-    border-bottom:2px dashed red;
+    border-bottom:1px dashed red;
     margin:15px;
+    padding-left:0px;
 }
 
-.subChild-1{
-    border-bottom:2px dashed blue!important;
-    padding-left:5px;
+ul.child-1{
+    border-right:1px solid #999;
+    padding-right:5px;
 }
-.subChild-2{
-    border-bottom:2px dashed purple!important;
-    padding-left:5px;
+ul.child-2{
+    border-right:1px solid #777;
+    padding-right:5px;
 }
-.subChild-3{
-    border-bottom:2px dashed pink!important;
-    padding-left:5px;
+ul.child-3{
+    border-right:1px solid #555;
+    padding-right:5px;
 }
-.subChild-4{
-    border-bottom:2px dashed orange!important;
-    padding-left:5px;
+ul.child-4{
+    border-right:1px solid #333;
+    padding-right:5px;
 }
-.subChild-5{
-    border-bottom:2px dashed white!important;
-    padding-left:5px;
+ul.child-5{
+    border-right:1px solid #222;
+    padding-right:5px;
 }
-.subChild-6{
-    border-bottom:2px dashed yellow!important;
-    padding-left:5px;
+ul.child-6{
+    border-right:1px solid #111;
+    padding-right:5px;
 }
-.subChild-7{
-    border-bottom:2px dashed green!important;
-    padding-left:5px;
+ul.child-7{
+    border-right:1px solid #000;
+    padding-right:5px;
 }
+
+ul[class*='child']{
+    border-left-width:3px;
+    border-left-style:solid;
+}
+
+/*ul #subChild-1{
+    border-left:4px solid blue!important;
+    padding-left:15px;
+}
+ul #subChild-2{
+    border-left:4px solid purple!important;
+    padding-left:15px;
+}
+ul #subChild-3{
+    border-left:4px solid green!important;
+    padding-left:15px;
+}
+ul #subChild-4{
+    border-left:4px solid orange!important;
+    padding-left:15px;
+}
+ul #subChild-5{
+    border-left:4px solid yellow!important;
+    padding-left:15px;
+}
+ul #subChild-6{
+    border-left:4px solid white!important;
+    padding-left:15px;
+}
+ul #subChild-7{
+    border-left:4px solid red!important;
+    padding-left:15px;
+}*/
 
 input[type=checkbox]{
     transform:scale(2, 2);

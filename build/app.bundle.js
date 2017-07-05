@@ -9802,6 +9802,7 @@ var FetchDemo = function (_React$Component) {
     };
 
     _this.state = {
+      subreddit: 'funny',
       posts: [],
       activePost: [0],
       activePostId: 0,
@@ -9820,8 +9821,6 @@ var FetchDemo = function (_React$Component) {
       fetch('https://www.reddit.com' + posturl + '.json').then(function (resp) {
         return resp.json();
       }).then(function (res) {
-        // console.log('activatepost')
-        // console.log(res)
         var activePost = res[0].data.children.map(function (obj) {
           return obj.data;
         });
@@ -9830,12 +9829,6 @@ var FetchDemo = function (_React$Component) {
           return obj.data;
         });
         _this2.setState({ activePostComments: activePostComments });
-
-        // console.log('activePost:')
-        // console.log(this.state.activePost);
-        // console.log('activePostComments:')
-        // console.log(this.state.activePostComments);
-
 
         if (document.getElementById(postid) !== null) {
           var topPos = document.getElementById(postid).offsetTop;
@@ -9851,9 +9844,9 @@ var FetchDemo = function (_React$Component) {
       var length = this.state.posts.length - 1;
       var last = this.state.posts[length].name;
 
-      // console.log('https://www.reddit.com/r/funny.json?limit=50&count=50&after='+last+'');
+      console.log('https://www.reddit.com/r/' + this.state.subreddit + '.json?limit=50&count=50&after=' + last + '');
 
-      fetch('https://www.reddit.com/r/funny.json?limit=50&count=50&after=' + last).then(function (resp) {
+      fetch('https://www.reddit.com/r/' + this.state.subreddit + '.json?limit=50&count=50&after=' + last).then(function (resp) {
         return resp.json();
       }).then(function (res) {
         // console.log(res);
@@ -9870,21 +9863,18 @@ var FetchDemo = function (_React$Component) {
   }, {
     key: 'handleKeys',
     value: function handleKeys(e) {
-      if (e.keyCode == '37') {
+      if (e.keyCode == '13') {
+        this.setSubReddit();
+      } else if (e.keyCode == '37') {
         // left arrow
-        // console.log('previous');
         var previous = this.state.activePostId - 1;
         var url = this.state.posts[previous].permalink;
-        // console.log(this.state.posts[this.state.activePostId-1].title);
         this.activatePost(url, previous);
       } else if (e.keyCode == '39') {
-        // right arrow
-        // console.log('next');
-        // console.log(this.state.activePostId+' of '+this.state.posts.length);
         var next = this.state.activePostId + 1;
 
         if (this.state.activePostId + 1 == this.state.posts.length) {
-          // console.log('fetching more...');
+          console.log('fetching more...');
           this.fetchMore();
         } else {
           var _url = this.state.posts[next].permalink;
@@ -9896,12 +9886,11 @@ var FetchDemo = function (_React$Component) {
   }, {
     key: 'scrolled',
     value: function scrolled() {
-      // console.log('scrolling');
       var o = document.getElementById('nav');
       if (o !== null) {
 
         if (o.offsetHeight + o.scrollTop > o.scrollHeight) {
-          // console.log('fetching more...');
+          console.log('fetching more...');
           this.fetchMore();
         }
       }
@@ -9909,21 +9898,25 @@ var FetchDemo = function (_React$Component) {
   }, {
     key: 'componentDidMount',
     value: function componentDidMount() {
+      this.fetchJSON('all');
+      document.addEventListener('keydown', this.handleKeys.bind(this), false);
+    }
+  }, {
+    key: 'fetchJSON',
+    value: function fetchJSON(subreddit) {
       var _this4 = this;
 
-      fetch('https://www.reddit.com/r/funny.json?limit=50').then(function (resp) {
+      console.log('https://www.reddit.com/r/' + subreddit + '.json?limit=50');
+      fetch('https://www.reddit.com/r/' + subreddit + '.json?limit=50').then(function (resp) {
         return resp.json();
       }).then(function (res) {
-        // console.log(res);
         var posts = res.data.children.map(function (obj) {
           return obj.data;
         });
         _this4.setState({ posts: posts });
-        // console.log(this.state.posts);
         //get first post
         _this4.activatePost(_this4.state.posts[0].permalink, 0);
       });
-      document.addEventListener('keydown', this.handleKeys.bind(this), false);
     }
   }, {
     key: 'createChildren',
@@ -9939,11 +9932,9 @@ var FetchDemo = function (_React$Component) {
         ));
 
         if (comment.replies) {
-          // console.log('comment has replies')
+
           var grandchild = _this5.createGrandChildTree(comment.replies, 1);
 
-          console.log('comment.replies is');
-          console.log(comment.replies);
           component.push(_react2.default.createElement('input', { type: 'checkbox', id: 'subChild-1' }));
           component.push(grandchild);
         }
@@ -9960,7 +9951,7 @@ var FetchDemo = function (_React$Component) {
       var grandchild = replies.data.children;
 
       grandchild.map(function (childcomment) {
-        if (childcomment.data.body) {
+        if (childcomment.data.body !== undefined) {
           container.push(_react2.default.createElement(
             'li',
             { className: "subChild-" + i, id: childcomment.data.id, key: Math.random() },
@@ -9969,22 +9960,34 @@ var FetchDemo = function (_React$Component) {
 
           if (childcomment.data.replies) {
             var smaller = _this6.getGrandChild(childcomment.data.replies, i++);
-            // container.push(<label for={'subChild-'+i}>-</label>)
-            container.push(_react2.default.createElement('input', { type: 'checkbox', id: 'subChild-' + i }));
-            container.push(_react2.default.createElement(
-              'ul',
-              { className: 'subChild-' + i },
-              smaller
-            ));
+            if (smaller !== undefined) {
+              container.push(_react2.default.createElement('input', { key: Math.random(), type: 'checkbox', id: 'subChild-' + i }));
+              container.push(_react2.default.createElement(
+                'ul',
+                { key: Math.random(), id: 'subChild-' + i },
+                smaller
+              ));
+            }
           }
         }
       });
+      var cRandomColor = Math.floor(Math.random() * 16777215).toString(16);
+      var cBorder = { 'borderLeftColor': '#' + cRandomColor };
 
       return _react2.default.createElement(
         'ul',
-        { className: 'child-' + i },
+        { key: Math.random(), className: 'child-' + i, style: cBorder },
         container
       );
+    }
+  }, {
+    key: 'setSubReddit',
+    value: function setSubReddit() {
+      var subreddit = document.getElementById('subreddit').value;
+      subreddit = subreddit.replace(/[^\w\s]/gi, '');
+      this.setState({ 'subreddit': subreddit });
+      this.setState({ 'posts': [] });
+      this.fetchJSON(subreddit);
     }
   }, {
     key: 'render',
@@ -10005,9 +10008,22 @@ var FetchDemo = function (_React$Component) {
           _react2.default.createElement('img', { src: this.state.activePost[0].thumbnail }),
           _react2.default.createElement(
             'ul',
-            { className: 'comments' },
+            { key: Math.random(), className: 'comments' },
             this.createChildren()
           )
+        ),
+        _react2.default.createElement(
+          'h1',
+          null,
+          this.state.subreddit
+        ),
+        _react2.default.createElement('input', { key: this.state.subreddit, id: 'subreddit', type: 'text' }),
+        _react2.default.createElement(
+          'button',
+          { onClick: function onClick() {
+              return _this7.setSubReddit();
+            } },
+          'Go'
         ),
         _react2.default.createElement(
           'div',
@@ -10015,17 +10031,12 @@ var FetchDemo = function (_React$Component) {
               return _this7.scrolled();
             } },
           _react2.default.createElement(
-            'h1',
-            null,
-            '/r/funny'
-          ),
-          _react2.default.createElement(
             'ul',
-            null,
+            { key: Math.random() },
             this.state.posts.map(function (post, id) {
               return _react2.default.createElement(
                 'li',
-                { key: post.id, id: post.id },
+                { key: Math.random(), id: post.id },
                 _react2.default.createElement(
                   'button',
                   { onClick: function onClick() {

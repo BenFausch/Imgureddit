@@ -6,6 +6,7 @@ class FetchDemo extends React.Component {
     super(props);
 
     this.state = {
+      subreddit:'funny',
       posts: [],
       activePost:[0],
       activePostId:0,
@@ -18,17 +19,10 @@ class FetchDemo extends React.Component {
     this.setState({'activePostId':id});
     fetch('https://www.reddit.com'+posturl+'.json')
       .then((resp) => resp.json()).then(res => {
-        // console.log('activatepost')
-        // console.log(res)
         let activePost = res[0].data.children.map(obj => obj.data);
         this.setState({ activePost });
         let activePostComments = res[1].data.children.map(obj => obj.data);
         this.setState({ activePostComments });
-
-        // console.log('activePost:')
-        // console.log(this.state.activePost);
-        // console.log('activePostComments:')
-        // console.log(this.state.activePostComments);
 
 
         if(document.getElementById(postid)!==null){
@@ -42,9 +36,9 @@ class FetchDemo extends React.Component {
     let length = this.state.posts.length-1;
     let last = this.state.posts[length].name;
 
-    // console.log('https://www.reddit.com/r/funny.json?limit=50&count=50&after='+last+'');
+    console.log('https://www.reddit.com/r/'+this.state.subreddit+'.json?limit=50&count=50&after='+last+'');
 
-    fetch('https://www.reddit.com/r/funny.json?limit=50&count=50&after='+last)
+    fetch('https://www.reddit.com/r/'+this.state.subreddit+'.json?limit=50&count=50&after='+last)
       .then((resp) => resp.json()).then(res => {
         // console.log(res);
         let posts = res.data.children.map(obj => obj.data);
@@ -58,22 +52,19 @@ class FetchDemo extends React.Component {
 
 
   handleKeys(e){
-    if (e.keyCode == '37') {
+    if (e.keyCode == '13') {
+      this.setSubReddit();
+    } else if (e.keyCode == '37') {
       // left arrow
-      // console.log('previous');
       let previous= this.state.activePostId-1;
       let url = this.state.posts[previous].permalink;
-      // console.log(this.state.posts[this.state.activePostId-1].title);
       this.activatePost(url,previous);
     }
     else if (e.keyCode == '39') {
-      // right arrow
-      // console.log('next');
-      // console.log(this.state.activePostId+' of '+this.state.posts.length);
       let next= this.state.activePostId+1;
 
       if((this.state.activePostId+1)==this.state.posts.length){
-        // console.log('fetching more...');
+        console.log('fetching more...');
         this.fetchMore();
       }else{
         let url = this.state.posts[next].permalink;
@@ -85,30 +76,32 @@ class FetchDemo extends React.Component {
   }
 
   scrolled(){
-    // console.log('scrolling');
     let o = document.getElementById('nav');
     if(o!==null){
              
       if(o.offsetHeight + o.scrollTop > o.scrollHeight)
       {
-        // console.log('fetching more...');
+        console.log('fetching more...');
         this.fetchMore();
       }
     }
   }
 
   componentDidMount() {
-    fetch('https://www.reddit.com/r/funny.json?limit=50')
+    this.fetchJSON('all');
+    document.addEventListener('keydown', this.handleKeys.bind(this), false);
+      
+  }
+
+  fetchJSON(subreddit){
+    console.log('https://www.reddit.com/r/'+subreddit+'.json?limit=50')
+    fetch('https://www.reddit.com/r/'+subreddit+'.json?limit=50')
       .then((resp) => resp.json()).then(res => {
-        // console.log(res);
         let posts = res.data.children.map(obj => obj.data);
         this.setState({ posts });
-        // console.log(this.state.posts);
         //get first post
         this.activatePost(this.state.posts[0].permalink,0);
       });
-    document.addEventListener('keydown', this.handleKeys.bind(this), false);
-      
   }
 
   createChildren(){
@@ -117,11 +110,9 @@ class FetchDemo extends React.Component {
       component.push(<li id={comment.id} key={Math.random()}>{comment.body}</li>);
     
          if (comment.replies){
-          // console.log('comment has replies')
+          
           let grandchild = this.createGrandChildTree(comment.replies, 1);
           
-          console.log('comment.replies is')
-          console.log(comment.replies)
           component.push( <input type="checkbox" id={'subChild-1'}/>)
           component.push(grandchild)
         }                                    
@@ -136,22 +127,26 @@ createGrandChildTree(replies, i ){
   let grandchild = replies.data.children;
 
    grandchild.map((childcomment)=>{
-     if(childcomment.data.body){
-           container.push(<li className={"subChild-"+i} id={childcomment.data.id} key={Math.random()}>{childcomment.data.body}</li>)
+     if(childcomment.data.body!==undefined){
+           container.push(<li className={"subChild-"+i} id={childcomment.data.id} key={Math.random()} >{childcomment.data.body}</li>)
            
            if(childcomment.data.replies){
              let smaller = this.getGrandChild(childcomment.data.replies, i++);
-            container.push(<input type="checkbox" id={'subChild-'+i}/>)
-             container.push(
-                <ul className={'subChild-'+i}>
-                  {smaller}
-                </ul>
-              );
+            if(smaller!==undefined){
+                        container.push(<input key={Math.random()}type="checkbox" id={'subChild-'+i}/>)
+                         container.push(
+                            <ul key={Math.random()} id={'subChild-'+i}>
+                              {smaller}
+                            </ul>
+                          );
+                       }
            }
      }
   });
+   let cRandomColor = Math.floor(Math.random()*16777215).toString(16);
+    let cBorder = {'borderLeftColor':'#'+cRandomColor};
     
-    return (<ul className={'child-'+i}>{container}</ul>);
+    return (<ul key={Math.random()} className={'child-'+i} style={cBorder}>{container}</ul>);
 }
 
 getGrandChild = (body, id) => {
@@ -159,7 +154,13 @@ let comp = this.createGrandChildTree(body, id);
 return comp;
 }   
 
-
+setSubReddit(){
+  let subreddit = document.getElementById('subreddit').value;
+  subreddit = subreddit.replace(/[^\w\s]/gi, '')
+  this.setState({'subreddit':subreddit});
+  this.setState({ 'posts':[] });
+  this.fetchJSON(subreddit);
+}
 
 
   render() {
@@ -168,17 +169,19 @@ return comp;
         <div className="activePost">
           <h1>{this.state.activePost[0].title}</h1>
           <img src={this.state.activePost[0].thumbnail}/>
-          <ul className="comments">
+          <ul key={Math.random()} className="comments">
             {this.createChildren()}
           </ul>
         </div>
-    
+        <h1>{this.state.subreddit}</h1>
+        <input key={this.state.subreddit} id="subreddit" type="text"></input>
+        <button onClick={()=>this.setSubReddit()}>Go</button>
         <div className="navBar" id="nav" onScroll={()=>this.scrolled()}>
-          <h1>{'/r/funny'}</h1>
-          <ul>
+          
+          <ul key={Math.random()}>
             {this.state.posts.map((post,id) =>
 
-              <li key={post.id} id={post.id}><button onClick={()=>this.activatePost(post.permalink,id, post.id)}>{post.title}
+              <li key={Math.random()} id={post.id}><button onClick={()=>this.activatePost(post.permalink,id, post.id)}>{post.title}
                 <img src={post.thumbnail}/></button></li>
             )}
           </ul>
