@@ -9834,6 +9834,7 @@ var FetchDemo = function (_React$Component) {
           var topPos = document.getElementById(postid).offsetTop;
           document.getElementById('nav').scrollTop = topPos - 40;
         }
+        // this.unCheckBoxes();
       });
     }
   }, {
@@ -9860,6 +9861,22 @@ var FetchDemo = function (_React$Component) {
         // console.log(this.state.posts);
       });
     }
+
+    //   unCheckBoxes(){
+    //     var array = document.getElementsByClassName("checkbox");
+    // for(var ii = 0; ii < array.length; ii++)
+    // {
+    //    if(array[ii].type == "checkbox")
+    //    {
+    //       if(array[ii].className == 'checkbox')
+    //        {
+    //         array[ii].checked = false;
+    //        }
+    //    }
+    // }
+    //   }
+
+
   }, {
     key: 'handleKeys',
     value: function handleKeys(e) {
@@ -9935,7 +9952,7 @@ var FetchDemo = function (_React$Component) {
 
           var grandchild = _this5.createGrandChildTree(comment.replies, 1);
 
-          component.push(_react2.default.createElement('input', { type: 'checkbox', id: 'subChild-1' }));
+          component.push(_react2.default.createElement('input', { key: Math.random(), type: 'checkbox', id: 'subChild-1', className: 'checkbox' }));
           component.push(grandchild);
         }
       });
@@ -9961,7 +9978,7 @@ var FetchDemo = function (_React$Component) {
           if (childcomment.data.replies) {
             var smaller = _this6.getGrandChild(childcomment.data.replies, i++);
             if (smaller !== undefined) {
-              container.push(_react2.default.createElement('input', { key: Math.random(), type: 'checkbox', id: 'subChild-' + i }));
+              container.push(_react2.default.createElement('input', { key: Math.random(), type: 'checkbox', id: 'subChild-' + i, className: 'checkbox' }));
               container.push(_react2.default.createElement(
                 'ul',
                 { key: Math.random(), id: 'subChild-' + i },
@@ -9990,6 +10007,17 @@ var FetchDemo = function (_React$Component) {
       this.fetchJSON(subreddit);
     }
   }, {
+    key: 'checkImage',
+    value: function checkImage(url) {
+      if (url !== undefined) {
+        if (url.match(/\.(jpeg|jpg|gif|png)$/) != null) {
+          return url;
+        } else {
+          return 'https://unsplash.it/200';
+        };
+      }
+    }
+  }, {
     key: 'render',
     value: function render() {
       var _this7 = this;
@@ -10005,7 +10033,7 @@ var FetchDemo = function (_React$Component) {
             null,
             this.state.activePost[0].title
           ),
-          _react2.default.createElement('img', { src: this.state.activePost[0].thumbnail }),
+          _react2.default.createElement('img', { src: this.checkImage(this.state.activePost[0].thumbnail) }),
           _react2.default.createElement(
             'ul',
             { key: Math.random(), className: 'comments' },
@@ -10043,7 +10071,7 @@ var FetchDemo = function (_React$Component) {
                       return _this7.activatePost(post.permalink, id, post.id);
                     } },
                   post.title,
-                  _react2.default.createElement('img', { src: post.thumbnail })
+                  _react2.default.createElement('img', { src: _this7.checkImage(post.thumbnail) })
                 )
               );
             })

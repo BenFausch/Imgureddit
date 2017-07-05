@@ -29,6 +29,7 @@ class FetchDemo extends React.Component {
           var topPos = document.getElementById(postid).offsetTop;
           document.getElementById('nav').scrollTop = topPos-40;
         }
+        // this.unCheckBoxes();
       });
   }
 
@@ -47,8 +48,23 @@ class FetchDemo extends React.Component {
         
         this.setState({ posts });
         // console.log(this.state.posts);
+
       });
   }
+
+//   unCheckBoxes(){
+//     var array = document.getElementsByClassName("checkbox");
+// for(var ii = 0; ii < array.length; ii++)
+// {
+//    if(array[ii].type == "checkbox")
+//    {
+//       if(array[ii].className == 'checkbox')
+//        {
+//         array[ii].checked = false;
+//        }
+//    }
+// }
+//   }
 
 
   handleKeys(e){
@@ -113,7 +129,7 @@ class FetchDemo extends React.Component {
           
           let grandchild = this.createGrandChildTree(comment.replies, 1);
           
-          component.push( <input type="checkbox" id={'subChild-1'}/>)
+          component.push( <input key={Math.random()} type="checkbox" id={'subChild-1'} className="checkbox"/>)
           component.push(grandchild)
         }                                    
     });
@@ -133,7 +149,7 @@ createGrandChildTree(replies, i ){
            if(childcomment.data.replies){
              let smaller = this.getGrandChild(childcomment.data.replies, i++);
             if(smaller!==undefined){
-                        container.push(<input key={Math.random()}type="checkbox" id={'subChild-'+i}/>)
+                        container.push(<input key={Math.random()} type="checkbox" id={'subChild-'+i} className="checkbox"/>)
                          container.push(
                             <ul key={Math.random()} id={'subChild-'+i}>
                               {smaller}
@@ -162,13 +178,24 @@ setSubReddit(){
   this.fetchJSON(subreddit);
 }
 
+checkImage(url){
+  if(url!==undefined){
+    if(url.match(/\.(jpeg|jpg|gif|png)$/) != null)
+      {
+            return url
+      }else{
+        return 'https://unsplash.it/200';
+      };
+    }
+}
+
 
   render() {
     return (
       <div className="content">
         <div className="activePost">
           <h1>{this.state.activePost[0].title}</h1>
-          <img src={this.state.activePost[0].thumbnail}/>
+          <img src={this.checkImage(this.state.activePost[0].thumbnail)}/>
           <ul key={Math.random()} className="comments">
             {this.createChildren()}
           </ul>
@@ -182,7 +209,7 @@ setSubReddit(){
             {this.state.posts.map((post,id) =>
 
               <li key={Math.random()} id={post.id}><button onClick={()=>this.activatePost(post.permalink,id, post.id)}>{post.title}
-                <img src={post.thumbnail}/></button></li>
+                <img src={this.checkImage(post.thumbnail)}/></button></li>
             )}
           </ul>
         </div>
