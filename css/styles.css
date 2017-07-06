@@ -37,7 +37,7 @@ header{background-color:#03A9F4;padding:14px;box-shadow:01px3pxrgba(0,0,0,0.12),
 .navBar ul li{
     display:block;
     border: none;
-    border-top: 10px solid darkred;
+    border-bottom: 10px solid darkred;
 }
 .navBar ul li button{
     font-size: 18px;
@@ -61,17 +61,33 @@ header{background-color:#03A9F4;padding:14px;box-shadow:01px3pxrgba(0,0,0,0.12),
     float:left;
     width:73%;
     background: rgba(255,255,255,.09);
+    overflow:hidden;
 }
-.activePost h1{
+.activePost h2, .activePost h3{
     font-size: 2.5vw;
     margin-top: 0px;
-    /* display: inline-block; */
+    font-weight:100;
     width: 70%;
     text-align: center;
     margin-left: auto;
     margin-right: auto;
     display: block;
+    margin-bottom: 0px;
 }
+
+.activePost h3{
+    font-size:1vw;
+    color:green;
+    text-align:right;
+    display: block;
+    margin: 2em 0;
+    width: 85%;
+}
+.activePost h3 span{
+    color:#333;
+    font-size:0.7vw;
+}
+
 .activePost ul{
     list-style:none;
     width: 95%;
@@ -84,13 +100,16 @@ header{background-color:#03A9F4;padding:14px;box-shadow:01px3pxrgba(0,0,0,0.12),
 }
 
 
-.activePost img{
+.activePost img, .activePost video{
     max-width: 70%;
     max-height: 700px;
     margin-left: auto;
     margin-right: auto;
     text-align: center;
     display: block;
+    padding: 0 0 2em 0 ;
+    margin-bottom:3em;
+    border-bottom:1px dashed white;
 }
 
 .comments{

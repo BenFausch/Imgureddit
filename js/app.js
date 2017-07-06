@@ -26,7 +26,7 @@ class FetchDemo extends React.Component {
 
 
         if(document.getElementById(postid)!==null){
-          var topPos = document.getElementById(postid).offsetTop-240;
+          var topPos = document.getElementById(postid).offsetTop-260;
           document.getElementById('nav').scrollTop = topPos;
         }
       });
@@ -56,20 +56,6 @@ class FetchDemo extends React.Component {
 
       });
   }
-
-  //   unCheckBoxes(){
-  //     var array = document.getElementsByClassName("checkbox");
-  // for(var ii = 0; ii < array.length; ii++)
-  // {
-  //    if(array[ii].type == "checkbox")
-  //    {
-  //       if(array[ii].className == 'checkbox')
-  //        {
-  //         array[ii].checked = false;
-  //        }
-  //    }
-  // }
-  //   }
 
 
   handleKeys(e){
@@ -117,7 +103,8 @@ class FetchDemo extends React.Component {
   fetchJSON(subreddit){
     console.log('https://www.reddit.com/r/'+subreddit+'.json?limit=50');
     fetch('https://www.reddit.com/r/'+subreddit+'.json?limit=50')
-      .then((resp) => resp.json()).then(res => {
+      .then((resp) => resp.json())
+      .then(res => {
         let posts = res.data.children.map(obj => obj.data);
         this.setState({ posts });
         console.log(this.state.posts);
@@ -192,7 +179,7 @@ checkImage(url, backup){
       {
         return url;
       }else if(backup!==undefined){
-        if(url.match(/\.(jpeg|jpg|gif|png)$/) != null){
+        if(backup.match(/\.(jpeg|jpg|gif|png)$/) != null){
           return backup;
         }else{
           return 'https://unsplash.it/200/300/?random';
@@ -204,13 +191,35 @@ checkImage(url, backup){
     }
   }
 
+getLargestImage(preview, url, thumbnail){
+  if(url!==undefined&&(url.match(/\.(gif|gifv)$/) != null)){
+    url = url.replace('gifv','mp4');
+    return(
+        <video preload="auto" autoPlay="autoplay" loop="loop">
+          <source src={url} type="video/mp4"></source>
+      </video>
+      );
+  }else if(preview!==undefined){
+    let biggest = preview.images[0].resolutions.slice(-1)[0];
+    let image = biggest.url
+    image = image.replace(/&amp;/g,'&');
+    console.log('biggest:'+image);
+    return <img src={image}/>;
+  }else{
+    //TODO CHANGE TO OUTPUT COMPONENT
+    // return this.checkImage(url, thumbnail);
+    return null
+  }
+}  
+
 
 render() {
     return (
       <div className="content">
         <div className="activePost">
-          <h1>{this.state.activePost[0].title}</h1>
-          <img src={this.checkImage(this.state.activePost[0].url, this.state.activePost[0].thumbnail)}/>
+          <h2>{this.state.activePost[0].title}</h2>
+          <h3><span>From the mind of</span> u/{this.state.activePost[0].author}</h3>
+          {this.getLargestImage(this.state.activePost[0].preview,this.state.activePost[0].url, this.state.activePost[0].thumbnail)}
           <ul key={Math.random()} className="comments">
             {this.createChildren()}
           </ul>
@@ -228,7 +237,7 @@ render() {
             {this.state.posts.map((post,id) =>
 
               <li key={Math.random()} id={post.id}><button onClick={()=>this.activatePost(post.permalink,id, post.id)}>{post.title}
-                <img src={this.checkImage(post.thumbnail)}/></button></li>
+                <img src={this.checkImage(post.url, post.thumbnail)}/></button></li>
             )}
           </ul>
         </div>

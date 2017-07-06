@@ -9831,7 +9831,7 @@ var FetchDemo = function (_React$Component) {
         _this2.setState({ activePostComments: activePostComments });
 
         if (document.getElementById(postid) !== null) {
-          var topPos = document.getElementById(postid).offsetTop - 240;
+          var topPos = document.getElementById(postid).offsetTop - 260;
           document.getElementById('nav').scrollTop = topPos;
         }
       });
@@ -9864,22 +9864,6 @@ var FetchDemo = function (_React$Component) {
         _this3.setState({ posts: posts });
       });
     }
-
-    //   unCheckBoxes(){
-    //     var array = document.getElementsByClassName("checkbox");
-    // for(var ii = 0; ii < array.length; ii++)
-    // {
-    //    if(array[ii].type == "checkbox")
-    //    {
-    //       if(array[ii].className == 'checkbox')
-    //        {
-    //         array[ii].checked = false;
-    //        }
-    //    }
-    // }
-    //   }
-
-
   }, {
     key: 'handleKeys',
     value: function handleKeys(e) {
@@ -10019,7 +10003,7 @@ var FetchDemo = function (_React$Component) {
         if (url.match(/\.(jpeg|jpg|gif|png)$/) != null) {
           return url;
         } else if (backup !== undefined) {
-          if (url.match(/\.(jpeg|jpg|gif|png)$/) != null) {
+          if (backup.match(/\.(jpeg|jpg|gif|png)$/) != null) {
             return backup;
           } else {
             return 'https://unsplash.it/200/300/?random';
@@ -10027,6 +10011,28 @@ var FetchDemo = function (_React$Component) {
         } else {
           return 'https://unsplash.it/200/300/?random';
         }
+      }
+    }
+  }, {
+    key: 'getLargestImage',
+    value: function getLargestImage(preview, url, thumbnail) {
+      if (url !== undefined && url.match(/\.(gif|gifv)$/) != null) {
+        url = url.replace('gifv', 'mp4');
+        return _react2.default.createElement(
+          'video',
+          { preload: 'auto', autoPlay: 'autoplay', loop: 'loop' },
+          _react2.default.createElement('source', { src: url, type: 'video/mp4' })
+        );
+      } else if (preview !== undefined) {
+        var biggest = preview.images[0].resolutions.slice(-1)[0];
+        var image = biggest.url;
+        image = image.replace(/&amp;/g, '&');
+        console.log('biggest:' + image);
+        return _react2.default.createElement('img', { src: image });
+      } else {
+        //TODO CHANGE TO OUTPUT COMPONENT
+        // return this.checkImage(url, thumbnail);
+        return null;
       }
     }
   }, {
@@ -10041,11 +10047,22 @@ var FetchDemo = function (_React$Component) {
           'div',
           { className: 'activePost' },
           _react2.default.createElement(
-            'h1',
+            'h2',
             null,
             this.state.activePost[0].title
           ),
-          _react2.default.createElement('img', { src: this.checkImage(this.state.activePost[0].url, this.state.activePost[0].thumbnail) }),
+          _react2.default.createElement(
+            'h3',
+            null,
+            _react2.default.createElement(
+              'span',
+              null,
+              'From the mind of'
+            ),
+            ' u/',
+            this.state.activePost[0].author
+          ),
+          this.getLargestImage(this.state.activePost[0].preview, this.state.activePost[0].url, this.state.activePost[0].thumbnail),
           _react2.default.createElement(
             'ul',
             { key: Math.random(), className: 'comments' },
@@ -10092,7 +10109,7 @@ var FetchDemo = function (_React$Component) {
                       return _this7.activatePost(post.permalink, id, post.id);
                     } },
                   post.title,
-                  _react2.default.createElement('img', { src: _this7.checkImage(post.thumbnail) })
+                  _react2.default.createElement('img', { src: _this7.checkImage(post.url, post.thumbnail) })
                 )
               );
             })
