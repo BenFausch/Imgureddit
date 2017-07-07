@@ -218,6 +218,8 @@ render() {
       <div className="content">
         <div className="activePost">
           <h2>{this.state.activePost[0].title}</h2>
+          <p id="ups">+{this.state.activePost[0].ups}</p>
+          <p id="downs">-{this.state.activePost[0].downs}</p>
           <h3><span>From the mind of</span> u/{this.state.activePost[0].author}</h3>
           {this.getLargestImage(this.state.activePost[0].preview,this.state.activePost[0].url, this.state.activePost[0].thumbnail)}
           <ul key={Math.random()} className="comments">

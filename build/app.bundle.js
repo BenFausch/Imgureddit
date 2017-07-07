@@ -10052,6 +10052,18 @@ var FetchDemo = function (_React$Component) {
             this.state.activePost[0].title
           ),
           _react2.default.createElement(
+            'p',
+            { id: 'ups' },
+            '+',
+            this.state.activePost[0].ups
+          ),
+          _react2.default.createElement(
+            'p',
+            { id: 'downs' },
+            '-',
+            this.state.activePost[0].downs
+          ),
+          _react2.default.createElement(
             'h3',
             null,
             _react2.default.createElement(
