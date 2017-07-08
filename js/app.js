@@ -4,14 +4,16 @@ import ReactDOM from 'react-dom';
 class FetchDemo extends React.Component {
   constructor(props) {
     super(props);
-
+    
+    let size = (window.innerWidth/21)+'px';
+    
     this.state = {
       subreddit:'all',
       posts: [],
       activePost:[0],
       activePostId:0,
       activePostComments:[0],
-
+      headerSize:{'fontSize': size},
     };
   }
 
@@ -29,6 +31,8 @@ class FetchDemo extends React.Component {
           var topPos = document.getElementById(postid).offsetTop-260;
           document.getElementById('nav').scrollTop = topPos;
         }
+
+
       });
   }
 
@@ -97,7 +101,8 @@ class FetchDemo extends React.Component {
   componentDidMount() {
     this.fetchJSON('all');
     document.addEventListener('keydown', this.handleKeys.bind(this), false);
-      
+    this.resizeSub();
+    window.addEventListener('resize', this.resizeSub.bind(this));
   }
 
   fetchJSON(subreddit){
@@ -168,7 +173,13 @@ getGrandChild = (body, id) => {
 setSubReddit(){
     let subreddit = document.getElementById('subreddit').value;
     subreddit = subreddit.replace(/[^\w\s]/gi, '');
+    
+    //resize title
+
+    
     this.setState({'subreddit':subreddit});
+    this.resizeSub();
+
     this.setState({ 'posts':[] });
     this.fetchJSON(subreddit);
   }
@@ -192,28 +203,42 @@ checkImage(url, backup){
   }
 
 getLargestImage(preview, url, thumbnail){
-  if(url!==undefined&&(url.match(/\.(gif|gifv)$/) != null)){
-    url = url.replace('gifv','mp4');
-    return(
+    if(url!==undefined&&(url.match(/\.(gif|gifv)$/) != null)){
+      url = url.replace('gifv','mp4');
+      return(
         <video preload="auto" autoPlay="autoplay" loop="loop">
           <source src={url} type="video/mp4"></source>
-      </video>
+        </video>
       );
-  }else if(preview!==undefined){
-    let biggest = preview.images[0].resolutions.slice(-1)[0];
-    let image = biggest.url
-    image = image.replace(/&amp;/g,'&');
-    console.log('biggest:'+image);
-    return <img src={image}/>;
-  }else{
+    }else if(preview!==undefined){
+      let biggest = preview.images[0].resolutions.slice(-1)[0];
+      let image = biggest.url;
+      image = image.replace(/&amp;/g,'&');
+      console.log('biggest:'+image);
+      return <img src={image}/>;
+    }else{
     //TODO CHANGE TO OUTPUT COMPONENT
     // return this.checkImage(url, thumbnail);
-    return null
+      return null;
+    }
+  }  
+
+resizeSub(){
+  
+    let subreddit = this.state.subreddit;
+    let size = ((window.innerWidth)/(subreddit.length+2)/3.5);
+    console.log('update');
+    this.setState({
+      'headerSize':{'fontSize': size+'px'},
+    });
   }
-}  
+
 
 
 render() {
+  ///
+
+  ///
     return (
       <div className="content">
         <div className="activePost">
@@ -227,10 +252,15 @@ render() {
           </ul>
         </div>
         <div className="titling">
-          <h1>r/{this.state.subreddit}</h1>
+          <h1 style={this.state.headerSize}>r/{this.state.subreddit}</h1>
           <div className="submit">
-            <input key={this.state.subreddit} id="subreddit" type="text"maxLength="100" placeholder="enter a sub"></input>
-            <button onClick={()=>this.setSubReddit()}>Go</button>
+            <form>
+              <fieldset>
+                <input key={this.state.subreddit} id="subreddit" type="text"maxLength="100" placeholder="enter a sub"></input>
+
+                <button onClick={()=>this.setSubReddit()}>Go</button>
+              </fieldset>
+            </form>
           </div>
         </div>
         <div className="navBar" id="nav" onScroll={()=>this.scrolled()}>

@@ -9801,13 +9801,15 @@ var FetchDemo = function (_React$Component) {
       return comp;
     };
 
+    var size = window.innerWidth / 21 + 'px';
+
     _this.state = {
       subreddit: 'all',
       posts: [],
       activePost: [0],
       activePostId: 0,
-      activePostComments: [0]
-
+      activePostComments: [0],
+      headerSize: { 'fontSize': size }
     };
     return _this;
   }
@@ -9904,6 +9906,8 @@ var FetchDemo = function (_React$Component) {
     value: function componentDidMount() {
       this.fetchJSON('all');
       document.addEventListener('keydown', this.handleKeys.bind(this), false);
+      this.resizeSub();
+      window.addEventListener("resize", this.resizeSub.bind(this));
     }
   }, {
     key: 'fetchJSON',
@@ -9992,7 +9996,13 @@ var FetchDemo = function (_React$Component) {
     value: function setSubReddit() {
       var subreddit = document.getElementById('subreddit').value;
       subreddit = subreddit.replace(/[^\w\s]/gi, '');
+
+      //resize title
+
+
       this.setState({ 'subreddit': subreddit });
+      this.resizeSub();
+
       this.setState({ 'posts': [] });
       this.fetchJSON(subreddit);
     }
@@ -10036,10 +10046,24 @@ var FetchDemo = function (_React$Component) {
       }
     }
   }, {
+    key: 'resizeSub',
+    value: function resizeSub() {
+
+      var subreddit = this.state.subreddit;
+      var size = window.innerWidth / (subreddit.length + 2) / 3.5;
+      console.log('update');
+      this.setState({
+        'headerSize': { 'fontSize': size + 'px' }
+      });
+    }
+  }, {
     key: 'render',
     value: function render() {
       var _this7 = this;
 
+      ///
+
+      ///
       return _react2.default.createElement(
         'div',
         { className: 'content' },
@@ -10086,20 +10110,28 @@ var FetchDemo = function (_React$Component) {
           { className: 'titling' },
           _react2.default.createElement(
             'h1',
-            null,
+            { style: this.state.headerSize },
             'r/',
             this.state.subreddit
           ),
           _react2.default.createElement(
             'div',
             { className: 'submit' },
-            _react2.default.createElement('input', { key: this.state.subreddit, id: 'subreddit', type: 'text', maxLength: '100', placeholder: 'enter a sub' }),
             _react2.default.createElement(
-              'button',
-              { onClick: function onClick() {
-                  return _this7.setSubReddit();
-                } },
-              'Go'
+              'form',
+              null,
+              _react2.default.createElement(
+                'fieldset',
+                null,
+                _react2.default.createElement('input', { key: this.state.subreddit, id: 'subreddit', type: 'text', maxLength: '100', placeholder: 'enter a sub' }),
+                _react2.default.createElement(
+                  'button',
+                  { onClick: function onClick() {
+                      return _this7.setSubReddit();
+                    } },
+                  'Go'
+                )
+              )
             )
           )
         ),

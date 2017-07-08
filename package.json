@@ -6,7 +6,8 @@
   "scripts": {
     "webpack": "webpack",
     "lint": "eslint js/app.js --cache --fix",
-    "prep": "webpack && eslint js/app.js --cache --fix"
+    "prep": "webpack && eslint js/app.js --cache --fix",
+    "serve":"node_modules/.bin/webpack-dev-server"
   },
   "repository": {
     "type": "git",
@@ -29,6 +30,7 @@
     "eslint-plugin-react": "^7.1.0",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
-    "webpack": "^3.0.0"
+    "webpack": "^3.0.0",
+    "webpack-dev-server": "^2.5.1"
   }
 }
