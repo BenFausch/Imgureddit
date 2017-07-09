@@ -9788,13 +9788,13 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var FetchDemo = function (_React$Component) {
-  _inherits(FetchDemo, _React$Component);
+var Beddit = function (_React$Component) {
+  _inherits(Beddit, _React$Component);
 
-  function FetchDemo(props) {
-    _classCallCheck(this, FetchDemo);
+  function Beddit(props) {
+    _classCallCheck(this, Beddit);
 
-    var _this = _possibleConstructorReturn(this, (FetchDemo.__proto__ || Object.getPrototypeOf(FetchDemo)).call(this, props));
+    var _this = _possibleConstructorReturn(this, (Beddit.__proto__ || Object.getPrototypeOf(Beddit)).call(this, props));
 
     _this.getGrandChild = function (body, id) {
       var comp = _this.createGrandChildTree(body, id);
@@ -9809,17 +9809,20 @@ var FetchDemo = function (_React$Component) {
       activePost: [0],
       activePostId: 0,
       activePostComments: [0],
-      headerSize: { 'fontSize': size }
+      headerSize: { 'fontSize': size },
+      loading: { 'opacity': 1 }
     };
     return _this;
   }
 
-  _createClass(FetchDemo, [{
+  _createClass(Beddit, [{
     key: 'activatePost',
     value: function activatePost(posturl, id, postid) {
       var _this2 = this;
 
+      this.setState({ loading: { 'opacity': 1 } });
       this.setState({ 'activePostId': id });
+
       fetch('https://www.reddit.com' + posturl + '.json').then(function (resp) {
         return resp.json();
       }).then(function (res) {
@@ -9832,10 +9835,20 @@ var FetchDemo = function (_React$Component) {
         });
         _this2.setState({ activePostComments: activePostComments });
 
+        // console.log(activePostComments);
+        //scroll to next item in list
         if (document.getElementById(postid) !== null) {
-          var topPos = document.getElementById(postid).offsetTop - 260;
+          var topPos = document.getElementById(postid).offsetTop - 240;
           document.getElementById('nav').scrollTop = topPos;
         }
+        //hide loading and scroll to top
+        _this2.setState({ loading: { 'opacity': 0 } });
+        var loading = document.getElementById('loading');
+        setTimeout(function () {
+          loading.classList.add('hidden');
+        }, 800);
+
+        window.scrollTo(0, 0);
       });
     }
   }, {
@@ -9856,7 +9869,7 @@ var FetchDemo = function (_React$Component) {
       fetch(url).then(function (resp) {
         return resp.json();
       }).then(function (res) {
-        console.log(res);
+        // console.log(res);
         var posts = res.data.children.map(function (obj) {
           return obj.data;
         });
@@ -9902,14 +9915,6 @@ var FetchDemo = function (_React$Component) {
       }
     }
   }, {
-    key: 'componentDidMount',
-    value: function componentDidMount() {
-      this.fetchJSON('all');
-      document.addEventListener('keydown', this.handleKeys.bind(this), false);
-      this.resizeSub();
-      window.addEventListener("resize", this.resizeSub.bind(this));
-    }
-  }, {
     key: 'fetchJSON',
     value: function fetchJSON(subreddit) {
       var _this4 = this;
@@ -9922,7 +9927,6 @@ var FetchDemo = function (_React$Component) {
           return obj.data;
         });
         _this4.setState({ posts: posts });
-        console.log(_this4.state.posts);
         //get first post
         _this4.activatePost(_this4.state.posts[0].permalink, 0);
       });
@@ -9937,13 +9941,23 @@ var FetchDemo = function (_React$Component) {
         component.push(_react2.default.createElement(
           'li',
           { id: comment.id, key: Math.random() },
-          comment.body
+          comment.body,
+          _react2.default.createElement(
+            'span',
+            { key: Math.random() },
+            comment.author,
+            _react2.default.createElement(
+              'span',
+              { key: Math.random(), className: 'commentPoints' },
+              '+',
+              comment.score
+            )
+          )
         ));
 
         if (comment.replies) {
 
           var grandchild = _this5.createGrandChildTree(comment.replies, 1);
-
           component.push(_react2.default.createElement('input', { key: Math.random(), type: 'checkbox', id: 'subChild-1', className: 'checkbox' }));
           component.push(grandchild);
         }
@@ -9964,7 +9978,18 @@ var FetchDemo = function (_React$Component) {
           container.push(_react2.default.createElement(
             'li',
             { className: 'subChild-' + i, id: childcomment.data.id, key: Math.random() },
-            childcomment.data.body
+            childcomment.data.body,
+            _react2.default.createElement(
+              'span',
+              { key: Math.random() },
+              childcomment.data.author,
+              _react2.default.createElement(
+                'span',
+                { key: Math.random(), className: 'commentPoints' },
+                '+',
+                childcomment.data.score
+              )
+            )
           ));
 
           if (childcomment.data.replies) {
@@ -9999,9 +10024,8 @@ var FetchDemo = function (_React$Component) {
 
       //resize title
 
-
       this.setState({ 'subreddit': subreddit });
-      this.resizeSub();
+      this.resizeSubHead();
 
       this.setState({ 'posts': [] });
       this.fetchJSON(subreddit);
@@ -10026,29 +10050,32 @@ var FetchDemo = function (_React$Component) {
   }, {
     key: 'getLargestImage',
     value: function getLargestImage(preview, url, thumbnail) {
-      if (url !== undefined && url.match(/\.(gif|gifv)$/) != null) {
+      if (url !== undefined && url.match(/\.(mp4|gifv)$/) != null) {
+        console.log('using gifv or mp4');
         url = url.replace('gifv', 'mp4');
-        return _react2.default.createElement(
-          'video',
-          { preload: 'auto', autoPlay: 'autoplay', loop: 'loop' },
-          _react2.default.createElement('source', { src: url, type: 'video/mp4' })
-        );
+        return _react2.default.createElement('video', { preload: 'auto', autoPlay: 'autoplay', loop: 'loop', src: url, type: 'video/mp4' });
+      }if (url !== undefined && url.match(/\.(gif)$/) != null) {
+        return _react2.default.createElement('img', { src: url });
       } else if (preview !== undefined) {
-        var biggest = preview.images[0].resolutions.slice(-1)[0];
+
+        console.log('fetching largest image of ' + preview.images[0].resolutions.length);
+        var biggest = preview.images[0].resolutions[0];
+        if (preview.images[0].resolutions.length > 1) {
+          biggest = preview.images[0].resolutions.slice(-2)[0];
+        }
         var image = biggest.url;
         image = image.replace(/&amp;/g, '&');
         console.log('biggest:' + image);
         return _react2.default.createElement('img', { src: image });
       } else {
-        //TODO CHANGE TO OUTPUT COMPONENT
-        // return this.checkImage(url, thumbnail);
-        return null;
+        console.log('using checkimage');
+        var _image = this.checkImage(url, thumbnail);
+        return _react2.default.createElement('img', { src: _image });
       }
     }
   }, {
-    key: 'resizeSub',
-    value: function resizeSub() {
-
+    key: 'resizeSubHead',
+    value: function resizeSubHead() {
       var subreddit = this.state.subreddit;
       var size = window.innerWidth / (subreddit.length + 2) / 3.5;
       console.log('update');
@@ -10057,16 +10084,31 @@ var FetchDemo = function (_React$Component) {
       });
     }
   }, {
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      this.fetchJSON('all');
+      document.addEventListener('keydown', this.handleKeys.bind(this), false);
+      this.resizeSubHead();
+      window.addEventListener('resize', this.resizeSubHead.bind(this));
+    }
+  }, {
     key: 'render',
     value: function render() {
       var _this7 = this;
 
-      ///
-
-      ///
       return _react2.default.createElement(
         'div',
         { className: 'content' },
+        _react2.default.createElement(
+          'p',
+          { className: 'loading', id: 'loading', style: this.state.loading },
+          '[bendit] $ asking reddit for dank mems..',
+          _react2.default.createElement(
+            'span',
+            { className: 'blinking-cursor' },
+            '\xA0'
+          )
+        ),
         _react2.default.createElement(
           'div',
           { className: 'activePost' },
@@ -10100,6 +10142,11 @@ var FetchDemo = function (_React$Component) {
           ),
           this.getLargestImage(this.state.activePost[0].preview, this.state.activePost[0].url, this.state.activePost[0].thumbnail),
           _react2.default.createElement(
+            'a',
+            { href: this.state.activePost[0].url, target: '_blank' },
+            'Permalink'
+          ),
+          _react2.default.createElement(
             'ul',
             { key: Math.random(), className: 'comments' },
             this.createChildren()
@@ -10117,21 +10164,13 @@ var FetchDemo = function (_React$Component) {
           _react2.default.createElement(
             'div',
             { className: 'submit' },
+            _react2.default.createElement('input', { key: this.state.subreddit, id: 'subreddit', type: 'text', maxLength: '100', placeholder: 'enter a sub' }),
             _react2.default.createElement(
-              'form',
-              null,
-              _react2.default.createElement(
-                'fieldset',
-                null,
-                _react2.default.createElement('input', { key: this.state.subreddit, id: 'subreddit', type: 'text', maxLength: '100', placeholder: 'enter a sub' }),
-                _react2.default.createElement(
-                  'button',
-                  { onClick: function onClick() {
-                      return _this7.setSubReddit();
-                    } },
-                  'Go'
-                )
-              )
+              'button',
+              { onClick: function onClick() {
+                  return _this7.setSubReddit();
+                } },
+              'Go'
             )
           )
         ),
@@ -10163,10 +10202,10 @@ var FetchDemo = function (_React$Component) {
     }
   }]);
 
-  return FetchDemo;
+  return Beddit;
 }(_react2.default.Component);
 
-_reactDom2.default.render(_react2.default.createElement(FetchDemo, { subreddit: 'reactjs' }), document.getElementById('container'));
+_reactDom2.default.render(_react2.default.createElement(Beddit, { subreddit: 'reactjs' }), document.getElementById('container'));
 
 /***/ }),
 /* 82 */

@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-class FetchDemo extends React.Component {
+class Beddit extends React.Component {
   constructor(props) {
     super(props);
     
@@ -14,11 +14,14 @@ class FetchDemo extends React.Component {
       activePostId:0,
       activePostComments:[0],
       headerSize:{'fontSize': size},
+      loading:{'opacity': 1},
     };
   }
 
   activatePost(posturl, id, postid){
+    this.setState({loading:{'opacity': 1}});
     this.setState({'activePostId':id});
+    
     fetch('https://www.reddit.com'+posturl+'.json')
       .then((resp) => resp.json()).then(res => {
         let activePost = res[0].data.children.map(obj => obj.data);
@@ -26,12 +29,18 @@ class FetchDemo extends React.Component {
         let activePostComments = res[1].data.children.map(obj => obj.data);
         this.setState({ activePostComments });
 
-
+        // console.log(activePostComments);
+        //scroll to next item in list
         if(document.getElementById(postid)!==null){
-          var topPos = document.getElementById(postid).offsetTop-260;
+          var topPos = document.getElementById(postid).offsetTop-240;
           document.getElementById('nav').scrollTop = topPos;
         }
+        //hide loading and scroll to top
+        this.setState({loading:{'opacity': 0}});
+        let loading = document.getElementById('loading');
+        setTimeout(function () { loading.classList.add('hidden'); }, 800);
 
+        window.scrollTo(0,0);
 
       });
   }
@@ -50,7 +59,7 @@ class FetchDemo extends React.Component {
 
     fetch(url)
       .then((resp) => resp.json()).then(res => {
-        console.log(res);
+        // console.log(res);
         let posts = res.data.children.map(obj => obj.data);
         let original = this.state.posts;
         posts = original.concat(posts);
@@ -98,12 +107,7 @@ class FetchDemo extends React.Component {
     }
   }
 
-  componentDidMount() {
-    this.fetchJSON('all');
-    document.addEventListener('keydown', this.handleKeys.bind(this), false);
-    this.resizeSub();
-    window.addEventListener('resize', this.resizeSub.bind(this));
-  }
+  
 
   fetchJSON(subreddit){
     console.log('https://www.reddit.com/r/'+subreddit+'.json?limit=50');
@@ -112,7 +116,6 @@ class FetchDemo extends React.Component {
       .then(res => {
         let posts = res.data.children.map(obj => obj.data);
         this.setState({ posts });
-        console.log(this.state.posts);
         //get first post
         this.activatePost(this.state.posts[0].permalink,0);
       });
@@ -121,12 +124,11 @@ class FetchDemo extends React.Component {
   createChildren(){
     let component = [];
     this.state.activePostComments.map((comment) => {
-      component.push(<li id={comment.id} key={Math.random()}>{comment.body}</li>);
+      component.push(<li id={comment.id} key={Math.random()}>{comment.body}<span key={Math.random()}>{comment.author}<span key={Math.random()} className="commentPoints">+{comment.score}</span></span></li>);
     
       if (comment.replies){
           
         let grandchild = this.createGrandChildTree(comment.replies, 1);
-          
         component.push( <input key={Math.random()} type="checkbox" id={'subChild-1'} className="checkbox"/>);
         component.push(grandchild);
       }                                    
@@ -142,7 +144,7 @@ class FetchDemo extends React.Component {
 
     grandchild.map((childcomment)=>{
       if(childcomment.data.body!==undefined){
-        container.push(<li className={'subChild-'+i} id={childcomment.data.id} key={Math.random()} >{childcomment.data.body}</li>);
+        container.push(<li className={'subChild-'+i} id={childcomment.data.id} key={Math.random()} >{childcomment.data.body}<span key={Math.random()}>{childcomment.data.author}<span key={Math.random()} className="commentPoints">+{childcomment.data.score}</span></span></li>);
            
         if(childcomment.data.replies){
           let smaller = this.getGrandChild(childcomment.data.replies, i++);
@@ -175,10 +177,9 @@ setSubReddit(){
     subreddit = subreddit.replace(/[^\w\s]/gi, '');
     
     //resize title
-
     
     this.setState({'subreddit':subreddit});
-    this.resizeSub();
+    this.resizeSubHead();
 
     this.setState({ 'posts':[] });
     this.fetchJSON(subreddit);
@@ -203,28 +204,32 @@ checkImage(url, backup){
   }
 
 getLargestImage(preview, url, thumbnail){
-    if(url!==undefined&&(url.match(/\.(gif|gifv)$/) != null)){
+    if(url!==undefined&&(url.match(/\.(mp4|gifv)$/) != null)){
+      console.log('using gifv or mp4');
       url = url.replace('gifv','mp4');
-      return(
-        <video preload="auto" autoPlay="autoplay" loop="loop">
-          <source src={url} type="video/mp4"></source>
-        </video>
-      );
+      return <video preload="auto" autoPlay="autoplay" loop="loop" src={url} type="video/mp4"></video>;
+    }if(url!==undefined&&(url.match(/\.(gif)$/) != null)){
+      return <img src={url}/>;
     }else if(preview!==undefined){
-      let biggest = preview.images[0].resolutions.slice(-1)[0];
-      let image = biggest.url;
+      
+      console.log('fetching largest image of '+preview.images[0].resolutions.length);
+      let biggest = preview.images[0].resolutions[0]; 
+      if(preview.images[0].resolutions.length>1){
+        biggest = preview.images[0].resolutions.slice(-2)[0];
+      }
+      let  image = biggest.url;
       image = image.replace(/&amp;/g,'&');
       console.log('biggest:'+image);
       return <img src={image}/>;
+
     }else{
-    //TODO CHANGE TO OUTPUT COMPONENT
-    // return this.checkImage(url, thumbnail);
-      return null;
+      console.log('using checkimage');
+      let image = this.checkImage(url, thumbnail);
+      return <img src={image}/>;
     }
   }  
 
-resizeSub(){
-  
+resizeSubHead(){
     let subreddit = this.state.subreddit;
     let size = ((window.innerWidth)/(subreddit.length+2)/3.5);
     console.log('update');
@@ -233,20 +238,28 @@ resizeSub(){
     });
   }
 
-
+componentDidMount() {
+    this.fetchJSON('all');
+    document.addEventListener('keydown', this.handleKeys.bind(this), false);
+    this.resizeSubHead();
+    window.addEventListener('resize', this.resizeSubHead.bind(this));
+  }
 
 render() {
-  ///
-
-  ///
     return (
       <div className="content">
+        <p className="loading" id="loading" style={this.state.loading}>[bendit] $ asking reddit for dank mems..<span className="blinking-cursor">&nbsp;</span></p>
         <div className="activePost">
           <h2>{this.state.activePost[0].title}</h2>
           <p id="ups">+{this.state.activePost[0].ups}</p>
           <p id="downs">-{this.state.activePost[0].downs}</p>
-          <h3><span>From the mind of</span> u/{this.state.activePost[0].author}</h3>
+          <h3>
+            <span>From the mind of</span> u/{this.state.activePost[0].author}
+          </h3>
           {this.getLargestImage(this.state.activePost[0].preview,this.state.activePost[0].url, this.state.activePost[0].thumbnail)}
+          <a href={this.state.activePost[0].url} target="_blank">
+          Permalink
+          </a>
           <ul key={Math.random()} className="comments">
             {this.createChildren()}
           </ul>
@@ -254,13 +267,8 @@ render() {
         <div className="titling">
           <h1 style={this.state.headerSize}>r/{this.state.subreddit}</h1>
           <div className="submit">
-            <form>
-              <fieldset>
-                <input key={this.state.subreddit} id="subreddit" type="text"maxLength="100" placeholder="enter a sub"></input>
-
-                <button onClick={()=>this.setSubReddit()}>Go</button>
-              </fieldset>
-            </form>
+            <input key={this.state.subreddit} id="subreddit" type="text"maxLength="100" placeholder="enter a sub"></input>
+            <button onClick={()=>this.setSubReddit()}>Go</button>
           </div>
         </div>
         <div className="navBar" id="nav" onScroll={()=>this.scrolled()}>
@@ -279,6 +287,6 @@ render() {
 }
 
 ReactDOM.render(
-  <FetchDemo subreddit="reactjs"/>,
+  <Beddit subreddit="reactjs"/>,
   document.getElementById('container')
 );
