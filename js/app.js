@@ -40,8 +40,6 @@ class Beddit extends React.Component {
         let loading = document.getElementById('loading');
         setTimeout(function () { loading.classList.add('hidden'); }, 800);
 
-        window.scrollTo(0,0);
-
       });
   }
 
@@ -79,6 +77,7 @@ class Beddit extends React.Component {
       let previous= this.state.activePostId-1;
       let url = this.state.posts[previous].permalink;
       this.activatePost(url,previous);
+      window.scrollTo(0,0);
     }
     else if (e.keyCode == '39') {
       let next= this.state.activePostId+1;
@@ -90,6 +89,7 @@ class Beddit extends React.Component {
         let url = this.state.posts[next].permalink;
         let postid = this.state.posts[next].id;
         this.activatePost(url,next,postid);
+        window.scrollTo(0,0);
       }
     } 
     
@@ -229,20 +229,20 @@ getLargestImage(preview, url, thumbnail){
     }
   }  
 
-resizeSubHead(){
-    let subreddit = this.state.subreddit;
-    let size = ((window.innerWidth)/(subreddit.length+2)/3.5);
-    console.log('update');
-    this.setState({
-      'headerSize':{'fontSize': size+'px'},
-    });
-  }
+// resizeSubHead(){
+//     let subreddit = this.state.subreddit;
+//     let size = ((window.innerWidth)/(subreddit.length+2)/2.6);
+//     console.log('update');
+//     this.setState({
+//       'headerSize':{'fontSize': size+'px'},
+//     });
+//   }
 
 componentDidMount() {
     this.fetchJSON('all');
     document.addEventListener('keydown', this.handleKeys.bind(this), false);
-    this.resizeSubHead();
-    window.addEventListener('resize', this.resizeSubHead.bind(this));
+    // this.resizeSubHead();
+    // window.addEventListener('resize', this.resizeSubHead.bind(this));
   }
 
 render() {
@@ -265,7 +265,7 @@ render() {
           </ul>
         </div>
         <div className="titling">
-          <h1 style={this.state.headerSize}>r/{this.state.subreddit}</h1>
+          <h1>r/{this.state.subreddit}</h1>
           <div className="submit">
             <input key={this.state.subreddit} id="subreddit" type="text"maxLength="100" placeholder="enter a sub"></input>
             <button onClick={()=>this.setSubReddit()}>Go</button>

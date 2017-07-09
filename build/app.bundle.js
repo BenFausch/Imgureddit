@@ -9847,8 +9847,6 @@ var Beddit = function (_React$Component) {
         setTimeout(function () {
           loading.classList.add('hidden');
         }, 800);
-
-        window.scrollTo(0, 0);
       });
     }
   }, {
@@ -9889,6 +9887,7 @@ var Beddit = function (_React$Component) {
         var previous = this.state.activePostId - 1;
         var url = this.state.posts[previous].permalink;
         this.activatePost(url, previous);
+        window.scrollTo(0, 0);
       } else if (e.keyCode == '39') {
         var next = this.state.activePostId + 1;
 
@@ -9899,6 +9898,7 @@ var Beddit = function (_React$Component) {
           var _url = this.state.posts[next].permalink;
           var postid = this.state.posts[next].id;
           this.activatePost(_url, next, postid);
+          window.scrollTo(0, 0);
         }
       }
     }
@@ -10073,23 +10073,23 @@ var Beddit = function (_React$Component) {
         return _react2.default.createElement('img', { src: _image });
       }
     }
-  }, {
-    key: 'resizeSubHead',
-    value: function resizeSubHead() {
-      var subreddit = this.state.subreddit;
-      var size = window.innerWidth / (subreddit.length + 2) / 3.5;
-      console.log('update');
-      this.setState({
-        'headerSize': { 'fontSize': size + 'px' }
-      });
-    }
+
+    // resizeSubHead(){
+    //     let subreddit = this.state.subreddit;
+    //     let size = ((window.innerWidth)/(subreddit.length+2)/2.6);
+    //     console.log('update');
+    //     this.setState({
+    //       'headerSize':{'fontSize': size+'px'},
+    //     });
+    //   }
+
   }, {
     key: 'componentDidMount',
     value: function componentDidMount() {
       this.fetchJSON('all');
       document.addEventListener('keydown', this.handleKeys.bind(this), false);
-      this.resizeSubHead();
-      window.addEventListener('resize', this.resizeSubHead.bind(this));
+      // this.resizeSubHead();
+      // window.addEventListener('resize', this.resizeSubHead.bind(this));
     }
   }, {
     key: 'render',
@@ -10157,7 +10157,7 @@ var Beddit = function (_React$Component) {
           { className: 'titling' },
           _react2.default.createElement(
             'h1',
-            { style: this.state.headerSize },
+            null,
             'r/',
             this.state.subreddit
           ),

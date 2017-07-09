@@ -22,7 +22,7 @@ header{background-color:#03A9F4;padding:14px;box-shadow:01px3pxrgba(0,0,0,0.12),
     top: 0;
     padding-top:30px;
     background: black;
-    z-index: 99;
+    z-index: 999;
     display: block;
     margin: 0;
     transition:all 500ms;
@@ -46,15 +46,16 @@ header{background-color:#03A9F4;padding:14px;box-shadow:01px3pxrgba(0,0,0,0.12),
 
 
 .navBar{
-    width: 25%;
+    width: 20%;
     padding:5%;
     padding:0;
     height: 100vh;
     position: fixed;
     overflow: scroll;
-    right: 0px;
+    right: -16px;
     box-sizing: border-box;
-    padding-top: 17vw;
+    top: 11vw;
+    border-top: 10px solid darkred;
 }
 .navBar ul {
     width:100%;
@@ -87,11 +88,13 @@ header{background-color:#03A9F4;padding:14px;box-shadow:01px3pxrgba(0,0,0,0.12),
 
 
 .activePost{
-    float:left;
-    width:73%;
+    /* float:left; */
+    width: 79%;
     background: rgba(255,255,255,.09);
     overflow:hidden;
     padding-top: 20px;
+    z-index: 99;
+    position: absolute;
 }
 .activePost h2, .activePost h3{
     font-size: 3.5vw;
@@ -152,9 +155,10 @@ header{background-color:#03A9F4;padding:14px;box-shadow:01px3pxrgba(0,0,0,0.12),
 
 .activePost ul{
     list-style:none;
-    width: 95%;
-    margin-left: auto;
-    margin-right: auto;
+    width: 100%;
+    /* margin-left: auto; */
+    padding: 0;
+    box-sizing: border-box;
 }
 .activePost ul li{
     color:white;
@@ -179,7 +183,8 @@ header{background-color:#03A9F4;padding:14px;box-shadow:01px3pxrgba(0,0,0,0.12),
 
 
 .activePost img, .activePost video{
-    width: 70%;
+    max-width: 70%;
+    min-width:40%;
     margin-left: auto;
     margin-right: auto;
     text-align: center;
@@ -190,10 +195,12 @@ header{background-color:#03A9F4;padding:14px;box-shadow:01px3pxrgba(0,0,0,0.12),
 
 .comments{
     width:70%!important;
+    margin-left: auto;
+    margin-right: auto;
 }
 .comments li{
     border-bottom:1px dashed red;
-    margin:15px;
+    margin: 10px 7px;
     padding-left:0px;
     padding-bottom: 7px;
 }
@@ -230,6 +237,7 @@ ul.child-7{
 ul[class*='child']{
     border-left-width:3px;
     border-left-style:solid;
+    padding-left: 30px;
 }
 
 input[type=checkbox]{
@@ -282,22 +290,28 @@ li + input[type=checkbox]{
     position:fixed;
     top:0px;
     right: 0px;
-    width: 25%;
-    border: 10px solid darkred;
+    width: 100%;
+    /* border: 10px solid darkred; */
     border-left: none;
-    height: 15vw;
-    overflow: hidden;
+    /* height: 15vw; */
+    /* overflow: hidden; */
     box-sizing: border-box;
     z-index: 9;
     background: black;
-    padding: 5px 1vw;
-    border-right: none;
+    /* padding: 0em 0em 0em 0em; */
+    /* border-right: none; */
+    /* vertical-align: middle; */
 }
 
 .titling h1{
-    font-size: 6.5vw;
-    line-height: 0;
-    padding-bottom:10px;
+    font-size: 4.5vw;
+    line-height: 10px;
+    /* padding-bottom:10px; */
+    text-align: right;
+    width: 99%;
+    /* align-self: stretch; */
+    /* word-wrap: break-word; */
+    margin-right: 1px;
 }
 .titling input{
     background: rgba(255,255,255,0.15);
@@ -335,4 +349,8 @@ li + input[type=checkbox]{
 }
 .submit{
     height:3vw;
+    /* position: relative; */
+    /* bottom: 0px; */
+    width: 18.5%;
+    float: right;
 }
