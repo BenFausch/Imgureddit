@@ -9919,6 +9919,7 @@ var Beddit = function (_React$Component) {
     value: function fetchJSON(subreddit) {
       var _this4 = this;
 
+      //fetch specific sub data
       console.log('https://www.reddit.com/r/' + subreddit + '.json?limit=50');
       fetch('https://www.reddit.com/r/' + subreddit + '.json?limit=50').then(function (resp) {
         return resp.json();
@@ -9930,6 +9931,9 @@ var Beddit = function (_React$Component) {
         //get first post
         _this4.activatePost(_this4.state.posts[0].permalink, 0);
       });
+      // 
+
+      ///endfetch
     }
   }, {
     key: 'createChildren',

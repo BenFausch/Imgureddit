@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link href='http://fonts.googleapis.com/css?family=Roboto:400,300,700' rel='stylesheet' type='text/css'>
+    <link href="css/styles.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div id="container"></div>
+<script>
+
+
+function extend(obj, src) {
+    Object.keys(src).forEach(function(key) { obj[key] = src[key]; });
+    return obj;
+}
+
+  let container = [];
+
+
+    fetch('https://www.reddit.com/subreddits.json?limit=100')
+      .then((resp) => resp.json())
+      .then(res => {
+        let subs = res.data.children.map(obj => obj.data);
+        let names = res.data.children.map(obj => obj.data.display_name);
+        
+        for(n in names){
+          container.push(names[n])
+        }
+        
+        console.log('subreds:')
+        console.log(names)
+          
+          let after = subs.slice(-1)[0];
+
+          console.log('after id is')
+          console.log(after.name);
+          
+          
+          i=0;
+          
+          let paginate = (after) => fetch('https://www.reddit.com/subreddits.json?limit=100&after='+after.name)
+            .then((resp) => resp.json())
+            .then(res => {
+              let subs = res.data.children.map((obj) => obj.data);
+              let names = res.data.children.map(obj => obj.data.display_name);
+              
+              for(n in names){
+               container.push(names[n])
+              }
+              console.log(names)
+              
+              // this.setState({ subs });
+              after = subs.slice(-1)[0];
+                
+                if (i>4700){
+                  console.log('done!')
+                  createDownload(container)
+                }else{
+                  paginate(after);
+                  console.log(subs.length)
+                  console.log(i+'of 5,000')
+                  i+=100;
+                  console.log('after:'+after.display_name)
+                }
+                            
+
+            });  
+
+            paginate(after);
+            ///endres      
+          
+       ////endwhile/////
+      });
+/////////////////////////
+
+function createDownload(container) {
+    console.log('FINAL CONTAINER')
+    console.log(container)
+    container= 'var subredditList = '+JSON.stringify(container);
+    //create downloadble file
+    var textFileAsBlob = new Blob([container], {
+        type: 'text/plain'
+    });
+    var downloadLink = document.createElement("a");
+    
+    downloadLink.download = 'subs.js';
+    downloadLink.innerHTML = "Download File";
+    downloadLink.href = window.URL.createObjectURL(textFileAsBlob);
+    document.getElementById('container').appendChild(downloadLink)
+}
+
+
+
+</script>
+</body>
+</html>

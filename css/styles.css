@@ -52,7 +52,7 @@ header{background-color:#03A9F4;padding:14px;box-shadow:01px3pxrgba(0,0,0,0.12),
     height: 100vh;
     position: fixed;
     overflow: scroll;
-    right: -16px;
+    right: 0px;
     box-sizing: border-box;
     top: 11vw;
     border-top: 10px solid darkred;
@@ -88,11 +88,10 @@ header{background-color:#03A9F4;padding:14px;box-shadow:01px3pxrgba(0,0,0,0.12),
 
 
 .activePost{
-    /* float:left; */
-    width: 79%;
+    width: 77%;
     background: rgba(255,255,255,.09);
     overflow:hidden;
-    padding-top: 20px;
+    padding-top: 4vw;
     z-index: 99;
     position: absolute;
 }
@@ -138,7 +137,7 @@ header{background-color:#03A9F4;padding:14px;box-shadow:01px3pxrgba(0,0,0,0.12),
 }
 .activePost #ups{
   position: fixed;
-  top: 1.5vw;
+  top: 3.5vw;
   left: 30px;
   font-weight: bold;
   color: fuchsia;
@@ -146,7 +145,7 @@ header{background-color:#03A9F4;padding:14px;box-shadow:01px3pxrgba(0,0,0,0.12),
 }
 .activePost #downs{
  position: fixed;
- top: 3.75vw;
+ top: 5.75vw;
  left: 30px;
  font-weight: bold;
  color: limegreen;
@@ -156,7 +155,6 @@ header{background-color:#03A9F4;padding:14px;box-shadow:01px3pxrgba(0,0,0,0.12),
 .activePost ul{
     list-style:none;
     width: 100%;
-    /* margin-left: auto; */
     padding: 0;
     box-sizing: border-box;
 }
@@ -177,7 +175,6 @@ header{background-color:#03A9F4;padding:14px;box-shadow:01px3pxrgba(0,0,0,0.12),
     font-size:1em;
     display:inline-block;
     padding-left:10px;
-    /* padding-top: 0px!important; */
     margin-top: -2px;
 }
 
@@ -291,26 +288,19 @@ li + input[type=checkbox]{
     top:0px;
     right: 0px;
     width: 100%;
-    /* border: 10px solid darkred; */
     border-left: none;
-    /* height: 15vw; */
-    /* overflow: hidden; */
+    height: 4.25vw;
     box-sizing: border-box;
-    z-index: 9;
-    background: black;
-    /* padding: 0em 0em 0em 0em; */
-    /* border-right: none; */
-    /* vertical-align: middle; */
+    z-index: 99;
+    background: rgba(0,0,0,0.7);
+    border-bottom: 2px solid purple;
 }
 
 .titling h1{
-    font-size: 4.5vw;
-    line-height: 10px;
-    /* padding-bottom:10px; */
+    font-size: 3.5vw;
+    line-height: 5px;
     text-align: right;
     width: 99%;
-    /* align-self: stretch; */
-    /* word-wrap: break-word; */
     margin-right: 1px;
 }
 .titling input{
@@ -348,9 +338,8 @@ li + input[type=checkbox]{
     border: 2px solid green;
 }
 .submit{
-    height:3vw;
-    /* position: relative; */
-    /* bottom: 0px; */
+    height: 3vw;
     width: 18.5%;
     float: right;
+    margin-top: .5vw;
 }

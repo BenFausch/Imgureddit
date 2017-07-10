@@ -110,6 +110,7 @@ class Beddit extends React.Component {
   
 
   fetchJSON(subreddit){
+    //fetch specific sub data
     console.log('https://www.reddit.com/r/'+subreddit+'.json?limit=50');
     fetch('https://www.reddit.com/r/'+subreddit+'.json?limit=50')
       .then((resp) => resp.json())
@@ -119,7 +120,12 @@ class Beddit extends React.Component {
         //get first post
         this.activatePost(this.state.posts[0].permalink,0);
       });
+    // 
+      
+    ///endfetch
   }
+
+
 
   createChildren(){
     let component = [];
