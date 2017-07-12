@@ -9847,6 +9847,26 @@ var Beddit = function (_React$Component) {
         setTimeout(function () {
           loading.classList.add('hidden');
         }, 800);
+
+        ///
+
+        var elements = document.getElementsByClassName('autocomplete-suggestions');
+        while (elements.length > 0) {
+          elements[0].parentNode.removeChild(elements[0]);
+        }
+
+        var subAutoComplete = new autoComplete({
+          selector: 'input[name="q"]',
+          minChars: 3,
+          source: function source(term, suggest) {
+            term = term.toLowerCase();
+
+            var matches = [];
+            for (var i = 0; i < subredditList.length; i++) {
+              if (~subredditList[i].toLowerCase().indexOf(term)) matches.push(subredditList[i]);
+            }suggest(matches);
+          }
+        });
       });
     }
   }, {
@@ -10029,7 +10049,7 @@ var Beddit = function (_React$Component) {
       //resize title
 
       this.setState({ 'subreddit': subreddit });
-      this.resizeSubHead();
+      // this.resizeSubHead();
 
       this.setState({ 'posts': [] });
       this.fetchJSON(subreddit);
@@ -10092,8 +10112,6 @@ var Beddit = function (_React$Component) {
     value: function componentDidMount() {
       this.fetchJSON('all');
       document.addEventListener('keydown', this.handleKeys.bind(this), false);
-      // this.resizeSubHead();
-      // window.addEventListener('resize', this.resizeSubHead.bind(this));
     }
   }, {
     key: 'render',
@@ -10168,7 +10186,7 @@ var Beddit = function (_React$Component) {
           _react2.default.createElement(
             'div',
             { className: 'submit' },
-            _react2.default.createElement('input', { key: this.state.subreddit, id: 'subreddit', type: 'text', maxLength: '100', placeholder: 'enter a sub' }),
+            _react2.default.createElement('input', { key: this.state.subreddit, name: 'q', id: 'subreddit', type: 'text', maxLength: '100', placeholder: 'enter a sub' }),
             _react2.default.createElement(
               'button',
               { onClick: function onClick() {

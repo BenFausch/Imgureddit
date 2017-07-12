@@ -1,14 +1,5 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <link href='http://fonts.googleapis.com/css?family=Roboto:400,300,700' rel='stylesheet' type='text/css'>
-    <link href="css/styles.css" rel="stylesheet" type="text/css">
-</head>
-<body>
-<div id="container"></div>
-<script>
-
+var fetch = require('node-fetch');
+var fs = require('fs');
 
 function extend(obj, src) {
     Object.keys(src).forEach(function(key) { obj[key] = src[key]; });
@@ -55,7 +46,8 @@ function extend(obj, src) {
                 
                 if (i>4700){
                   console.log('done!')
-                  createDownload(container)
+                  createFile(container)
+
                 }else{
                   paginate(after);
                   console.log(subs.length)
@@ -74,24 +66,22 @@ function extend(obj, src) {
       });
 /////////////////////////
 
-function createDownload(container) {
+
+
+function createFile(container) {
     console.log('FINAL CONTAINER')
     console.log(container)
     container= 'var subredditList = '+JSON.stringify(container);
     //create downloadble file
-    var textFileAsBlob = new Blob([container], {
-        type: 'text/plain'
-    });
-    var downloadLink = document.createElement("a");
-    
-    downloadLink.download = 'subs.js';
-    downloadLink.innerHTML = "Download File";
-    downloadLink.href = window.URL.createObjectURL(textFileAsBlob);
-    document.getElementById('container').appendChild(downloadLink)
+    fs.writeFile("subreddits.js", container, function(err) {
+            if(err) {
+              return console.log(err);
+          }
+
+          console.log("The file was saved!");
+          });
 }
 
 
 
-</script>
-</body>
-</html>
+

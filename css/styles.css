@@ -96,7 +96,7 @@ header{background-color:#03A9F4;padding:14px;box-shadow:01px3pxrgba(0,0,0,0.12),
     position: absolute;
 }
 .activePost h2, .activePost h3{
-    font-size: 3.5vw;
+    font-size: 2.5vw;
     margin-top: 0px;
     font-weight:100;
     width: 70%;
@@ -342,4 +342,19 @@ li + input[type=checkbox]{
     width: 18.5%;
     float: right;
     margin-top: .5vw;
+}
+.autocomplete-suggestions{
+    /*display:none;*/
+}
+.autocomplete-suggestions{
+    width:19.5%;
+    position:fixed;
+    right:0px;
+    top:11vw;
+    background:rgba(0,0,0,0.8);
+    border:0.5px solid white;
+    color:red;
+    height:auto;
+    max-height:15em;
+    overflow:scroll;
 }

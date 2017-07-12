@@ -40,6 +40,27 @@ class Beddit extends React.Component {
         let loading = document.getElementById('loading');
         setTimeout(function () { loading.classList.add('hidden'); }, 800);
 
+        ///
+        
+           var elements = document.getElementsByClassName('autocomplete-suggestions');
+          while(elements.length > 0){
+            elements[0].parentNode.removeChild(elements[0]);
+          }
+        
+       let subAutoComplete = new autoComplete({
+    selector: 'input[name="q"]',
+    minChars: 3,
+    source: function(term, suggest){
+        term = term.toLowerCase();
+        
+        var matches = [];
+        for (let i=0; i<subredditList.length; i++)
+            if (~subredditList[i].toLowerCase().indexOf(term)) matches.push(subredditList[i]);
+        suggest(matches);
+    }
+});
+
+
       });
   }
 
@@ -185,7 +206,7 @@ setSubReddit(){
     //resize title
     
     this.setState({'subreddit':subreddit});
-    this.resizeSubHead();
+    // this.resizeSubHead();
 
     this.setState({ 'posts':[] });
     this.fetchJSON(subreddit);
@@ -247,8 +268,7 @@ getLargestImage(preview, url, thumbnail){
 componentDidMount() {
     this.fetchJSON('all');
     document.addEventListener('keydown', this.handleKeys.bind(this), false);
-    // this.resizeSubHead();
-    // window.addEventListener('resize', this.resizeSubHead.bind(this));
+    
   }
 
 render() {
@@ -273,7 +293,7 @@ render() {
         <div className="titling">
           <h1>r/{this.state.subreddit}</h1>
           <div className="submit">
-            <input key={this.state.subreddit} id="subreddit" type="text"maxLength="100" placeholder="enter a sub"></input>
+            <input key={this.state.subreddit} name="q" id="subreddit" type="text"maxLength="100" placeholder="enter a sub"></input>
             <button onClick={()=>this.setSubReddit()}>Go</button>
           </div>
         </div>
