@@ -158,7 +158,7 @@ header{background-color:#03A9F4;padding:14px;box-shadow:01px3pxrgba(0,0,0,0.12),
     padding: 0;
     box-sizing: border-box;
 }
-.activePost ul li{
+.activePost ul li p{
     color:white;
     line-height: 1.25em;
 }
@@ -344,17 +344,21 @@ li + input[type=checkbox]{
     margin-top: .5vw;
 }
 .autocomplete-suggestions{
-    /*display:none;*/
+    display:none;
 }
 .autocomplete-suggestions{
     width:19.5%;
+    padding:5px;
     position:fixed;
     right:0px;
     top:11vw;
     background:rgba(0,0,0,0.8);
-    border:0.5px solid white;
+    border:0.5px solid #ccc;
     color:red;
     height:auto;
     max-height:15em;
     overflow:scroll;
+}
+.autocomplete-suggestions div{
+    margin-top:5px;
 }

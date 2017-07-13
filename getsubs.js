@@ -44,14 +44,14 @@ function extend(obj, src) {
               // this.setState({ subs });
               after = subs.slice(-1)[0];
                 
-                if (i>4700){
+                if (i>14700){
                   console.log('done!')
                   createFile(container)
 
                 }else{
                   paginate(after);
                   console.log(subs.length)
-                  console.log(i+' of 5,000')
+                  console.log(i+' of 15,000')
                   i+=100;
                   console.log('after:'+after.display_name)
                 }

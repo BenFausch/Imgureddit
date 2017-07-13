@@ -9812,6 +9812,7 @@ var Beddit = function (_React$Component) {
       headerSize: { 'fontSize': size },
       loading: { 'opacity': 1 }
     };
+
     return _this;
   }
 
@@ -9838,7 +9839,7 @@ var Beddit = function (_React$Component) {
         // console.log(activePostComments);
         //scroll to next item in list
         if (document.getElementById(postid) !== null) {
-          var topPos = document.getElementById(postid).offsetTop - 240;
+          var topPos = document.getElementById(postid).offsetTop;
           document.getElementById('nav').scrollTop = topPos;
         }
         //hide loading and scroll to top
@@ -9848,8 +9849,7 @@ var Beddit = function (_React$Component) {
           loading.classList.add('hidden');
         }, 800);
 
-        ///
-
+        ///build autocomplete element
         var elements = document.getElementsByClassName('autocomplete-suggestions');
         while (elements.length > 0) {
           elements[0].parentNode.removeChild(elements[0]);
@@ -9961,7 +9961,12 @@ var Beddit = function (_React$Component) {
       var _this5 = this;
 
       var component = [];
+      var renderHTML = function renderHTML(rawHTML) {
+        return _react2.default.createElement("p", { dangerouslySetInnerHTML: { __html: rawHTML } });
+      };
+
       this.state.activePostComments.map(function (comment) {
+        console.log(comment);
         component.push(_react2.default.createElement(
           'li',
           { id: comment.id, key: Math.random() },
@@ -10097,16 +10102,16 @@ var Beddit = function (_React$Component) {
         return _react2.default.createElement('img', { src: _image });
       }
     }
-
-    // resizeSubHead(){
-    //     let subreddit = this.state.subreddit;
-    //     let size = ((window.innerWidth)/(subreddit.length+2)/2.6);
-    //     console.log('update');
-    //     this.setState({
-    //       'headerSize':{'fontSize': size+'px'},
-    //     });
-    //   }
-
+  }, {
+    key: 'prettyPerm',
+    value: function prettyPerm(url) {
+      if (url) {
+        var temp = url.split("/");
+        var baseUrl = temp[2];
+        return baseUrl;
+      }
+      return '';
+    }
   }, {
     key: 'componentDidMount',
     value: function componentDidMount() {
@@ -10166,7 +10171,8 @@ var Beddit = function (_React$Component) {
           _react2.default.createElement(
             'a',
             { href: this.state.activePost[0].url, target: '_blank' },
-            'Permalink'
+            '\uD83D\uDD17 ',
+            this.prettyPerm(this.state.activePost[0].url)
           ),
           _react2.default.createElement(
             'ul',

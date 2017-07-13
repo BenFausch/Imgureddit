@@ -2,6 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 class Beddit extends React.Component {
+   
+
   constructor(props) {
     super(props);
     
@@ -16,6 +18,8 @@ class Beddit extends React.Component {
       headerSize:{'fontSize': size},
       loading:{'opacity': 1},
     };
+   
+
   }
 
   activatePost(posturl, id, postid){
@@ -32,7 +36,7 @@ class Beddit extends React.Component {
         // console.log(activePostComments);
         //scroll to next item in list
         if(document.getElementById(postid)!==null){
-          var topPos = document.getElementById(postid).offsetTop-240;
+          var topPos = document.getElementById(postid).offsetTop;
           document.getElementById('nav').scrollTop = topPos;
         }
         //hide loading and scroll to top
@@ -40,8 +44,7 @@ class Beddit extends React.Component {
         let loading = document.getElementById('loading');
         setTimeout(function () { loading.classList.add('hidden'); }, 800);
 
-        ///
-        
+        ///build autocomplete element
            var elements = document.getElementsByClassName('autocomplete-suggestions');
           while(elements.length > 0){
             elements[0].parentNode.removeChild(elements[0]);
@@ -147,11 +150,23 @@ class Beddit extends React.Component {
   }
 
 
-
   createChildren(){
     let component = [];
+    const renderHTML = (rawHTML) => React.createElement("p", { dangerouslySetInnerHTML: { __html: rawHTML } });
+
     this.state.activePostComments.map((comment) => {
-      component.push(<li id={comment.id} key={Math.random()}>{comment.body}<span key={Math.random()}>{comment.author}<span key={Math.random()} className="commentPoints">+{comment.score}</span></span></li>);
+      console.log(comment)
+      component.push(
+        <li id={comment.id} key={Math.random()}>
+          {/*{renderHTML(comment.body_html)}*/}
+          {comment.body}
+
+            <span key={Math.random()}>
+              {comment.author}
+                <span key={Math.random()} className="commentPoints">+{comment.score}</span>
+            </span>
+        </li>
+        );
     
       if (comment.replies){
           
@@ -256,14 +271,15 @@ getLargestImage(preview, url, thumbnail){
     }
   }  
 
-// resizeSubHead(){
-//     let subreddit = this.state.subreddit;
-//     let size = ((window.innerWidth)/(subreddit.length+2)/2.6);
-//     console.log('update');
-//     this.setState({
-//       'headerSize':{'fontSize': size+'px'},
-//     });
-//   }
+prettyPerm(url){
+  if(url){
+    let temp = url.split("/");
+    let baseUrl = temp[2];
+    return baseUrl;
+  }
+  return '';
+}
+
 
 componentDidMount() {
     this.fetchJSON('all');
@@ -284,7 +300,7 @@ render() {
           </h3>
           {this.getLargestImage(this.state.activePost[0].preview,this.state.activePost[0].url, this.state.activePost[0].thumbnail)}
           <a href={this.state.activePost[0].url} target="_blank">
-          Permalink
+          &#128279; {this.prettyPerm(this.state.activePost[0].url)} 
           </a>
           <ul key={Math.random()} className="comments">
             {this.createChildren()}
